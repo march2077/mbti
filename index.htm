@@ -10,8 +10,8 @@
             /* 🎨 修改為：奶油韓系可愛配色 */
             --bg-color: #fffaf0; /* 溫暖的奶油底色 */
             
-            /* ✅ 1. 卡片底色：深一點的粉色 (保留這個修改) */
-            --card-bg: #ffc4d0;
+            /* ✅ 卡片底色：維持您要求的柔和淡粉色 */
+            --card-bg: #ffe1e6;
             
             --text-main: #5d4037; /* 像巧克力的深褐色文字 */
             --text-sub: #8d6e63;
@@ -107,7 +107,6 @@
 
         h1 {
             margin: 0 0 10px 0;
-            /* 因底色變深粉紅，為了可讀性，標題微調為白色，增加陰影讓它清楚 */
             color: #ffffff; 
             text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
             font-size: 1.8rem;
@@ -120,14 +119,13 @@
         }
 
         p {
-            /* 為了在深粉紅底色上看清楚，稍微調整文字顏色 */
             color: #7d5a50;
             line-height: 1.6;
             margin-bottom: 30px;
             font-weight: 600;
         }
 
-        /* ✅ 3. 主要按鈕：復原為原本的粉紅色樣式 */
+        /* 主要按鈕 */
         .btn-primary {
             background: linear-gradient(135deg, var(--accent-pink), var(--accent-pink-dark));
             color: white;
@@ -174,8 +172,8 @@
         }
         
         .btn-gender {
-            /* ✅ 2. 性別按鈕：底色改為淡奶油黃 (原本是白色) */
-            background: #fffaf0; 
+            /* ✅ 未選中：維持淡奶黃色 */
+            background: #fffde7; 
             
             border: 3px solid #f0f0f0;
             border-radius: 25px;
@@ -197,8 +195,10 @@
 
         .btn-gender.selected {
             border-color: var(--accent-pink-dark);
-            /* ✅ 2. 性別按鈕(選中)：復原為原本的粉色 */
-            background: #ffebee; 
+            
+            /* 👇 修改處：將選中時的底色加深 (改成櫻花粉)，避免跟卡片背景混淆 */
+            background: #ffb7c5; 
+            
             box-shadow: 0 0 0 4px rgba(255, 183, 197, 0.3);
         }
 
@@ -217,7 +217,7 @@
         .progress-track {
             width: 100%;
             height: 18px;
-            background: rgba(255,255,255,0.5); /* 微調透明度以配合深色背景 */
+            background: rgba(255,255,255,0.5); 
             border-radius: 20px;
             margin-bottom: 30px;
             overflow: hidden;
@@ -250,7 +250,7 @@
             background: #fffbf0; 
             border-radius: 20px;
             padding: 15px;
-            border: 4px solid #fff; /* 增加白邊讓它在粉紅底上突出 */
+            border: 4px solid #fff; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
