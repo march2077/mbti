@@ -10,8 +10,8 @@
             /* 🎨 修改為：奶油韓系可愛配色 */
             --bg-color: #fffaf0; /* 溫暖的奶油底色 */
             
-            /* 👇 修改處 1：卡片底色再加深一點，變成明顯的粉色 */
-            --card-bg: #ffc4d0; 
+            /* ✅ 1. 卡片底色：深一點的粉色 (保留這個修改) */
+            --card-bg: #ffc4d0;
             
             --text-main: #5d4037; /* 像巧克力的深褐色文字 */
             --text-sub: #8d6e63;
@@ -30,7 +30,6 @@
         body {
             font-family: 'Fredoka', 'Noto Sans TC', sans-serif;
             background-color: var(--bg-color);
-            /* 增加可愛的背景波點 */
             background-image: radial-gradient(#ffecb3 20%, transparent 20%), radial-gradient(#ffecb3 20%, transparent 20%);
             background-position: 0 0, 25px 25px;
             background-size: 50px 50px;
@@ -43,7 +42,6 @@
             overflow-x: hidden;
         }
 
-        /* ✨ 新增：背景飄浮裝飾 (不影響內容) */
         .floating-bg {
             position: fixed;
             top: 0;
@@ -58,10 +56,9 @@
         .paw-bg {
             position: absolute;
             font-size: 2rem;
-            /* 初始設為隱藏，避免動畫開始前擠在上方 */
-            opacity: 0; 
+            opacity: 0; /* 修正背景特效堆積問題 */
             animation: floatUp 20s infinite linear;
-            top: 0; 
+            top: 0;
         }
 
         @keyframes floatUp {
@@ -85,14 +82,12 @@
             border: 5px solid #fff; /* 像拍立得照片的白邊 */
         }
 
-        /* 圖片容器：改成圓角更柔和的風格 */
         .img-wrapper {
             width: 100%;
             height: 280px; 
             border-radius: 25px;
             overflow: hidden;
             margin-bottom: 25px;
-            /* 加上可愛的粉色邊框 */
             border: 6px solid var(--accent-pink); 
             box-shadow: 0 8px 20px rgba(189, 100, 116, 0.3);
             position: relative;
@@ -107,12 +102,13 @@
         }
 
         .img-wrapper:hover img {
-            transform: scale(1.08) rotate(2deg); /* 滑鼠移過去會可愛地歪頭 */
+            transform: scale(1.08) rotate(2deg);
         }
 
         h1 {
             margin: 0 0 10px 0;
-            color: #fff; /* 因為底色變深粉紅，標題改白色或維持深紅，這裡用白色增加對比 */
+            /* 因底色變深粉紅，為了可讀性，標題微調為白色，增加陰影讓它清楚 */
+            color: #ffffff; 
             text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
             font-size: 1.8rem;
             letter-spacing: 1px;
@@ -124,23 +120,24 @@
         }
 
         p {
-            color: #7d5a50; /* 調整文字顏色以配合較深的粉紅底 */
+            /* 為了在深粉紅底色上看清楚，稍微調整文字顏色 */
+            color: #7d5a50;
             line-height: 1.6;
             margin-bottom: 30px;
             font-weight: 600;
         }
 
-        /* 按鈕樣式：果凍感 */
+        /* ✅ 3. 主要按鈕：復原為原本的粉紅色樣式 */
         .btn-primary {
-            background: linear-gradient(135deg, #fff, #ffebee);
-            color: var(--accent-pink-dark); /* 按鈕改為淺色底、深色字 */
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-pink-dark));
+            color: white;
             border: none;
             padding: 15px 40px;
             font-size: 1.2rem;
             border-radius: 50px;
             cursor: pointer;
             font-weight: bold;
-            box-shadow: 0 6px 15px rgba(165, 80, 100, 0.2);
+            box-shadow: 0 6px 15px rgba(255, 143, 163, 0.4);
             transition: transform 0.2s, box-shadow 0.2s;
             width: 85%;
             margin-top: 10px;
@@ -148,9 +145,20 @@
             overflow: hidden;
         }
         
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: rgba(255,255,255,0.25);
+            border-radius: 50px 50px 0 0;
+        }
+
         .btn-primary:hover {
             transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 10px 20px rgba(165, 80, 100, 0.3);
+            box-shadow: 0 10px 20px rgba(255, 143, 163, 0.6);
         }
 
         .btn-primary:active {
@@ -166,10 +174,10 @@
         }
         
         .btn-gender {
-            /* 👇 修改處 2：改為淡奶油黃，與外部背景呼應 */
+            /* ✅ 2. 性別按鈕：底色改為淡奶油黃 (原本是白色) */
             background: #fffaf0; 
             
-            border: 3px solid #fff;
+            border: 3px solid #f0f0f0;
             border-radius: 25px;
             padding: 20px;
             width: 130px;
@@ -182,15 +190,16 @@
         }
 
         .btn-gender:hover {
-            background: #fff;
+            background: #fff0f5;
             border-color: var(--accent-pink);
             transform: translateY(-5px);
         }
 
         .btn-gender.selected {
-            border-color: var(--text-main);
-            background: #fff59d; /* 選中時變深一點的黃色 */
-            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5);
+            border-color: var(--accent-pink-dark);
+            /* ✅ 2. 性別按鈕(選中)：復原為原本的粉色 */
+            background: #ffebee; 
+            box-shadow: 0 0 0 4px rgba(255, 183, 197, 0.3);
         }
 
         .gender-icon {
@@ -208,7 +217,7 @@
         .progress-track {
             width: 100%;
             height: 18px;
-            background: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.5); /* 微調透明度以配合深色背景 */
             border-radius: 20px;
             margin-bottom: 30px;
             overflow: hidden;
@@ -225,7 +234,7 @@
                 var(--accent-blue) 10px,
                 #b4f0ee 10px,
                 #b4f0ee 20px
-            ); /* 糖果條紋效果 */
+            );
             width: 0%;
             transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border-radius: 20px;
@@ -238,10 +247,10 @@
             align-items: center;
             justify-content: center;
             margin-bottom: 25px;
-            background: #fffbf0; /* 淡黃色卡片背景 */
+            background: #fffbf0; 
             border-radius: 20px;
             padding: 15px;
-            border: 4px solid #fff;
+            border: 4px solid #fff; /* 增加白邊讓它在粉紅底上突出 */
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
@@ -279,7 +288,6 @@
             box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
 
-        /* 定義每個表情的顏色邊框 - 改為柔和色系 */
         .scale-1 { width: 50px; height: 50px; color: #ff8a80; border-color: #ffcdd2; background: #ffebee; }
         .scale-2 { width: 42px; height: 42px; color: #ffab91; border-color: #ffccbc; background: #fbe9e7; }
         .scale-3 { width: 38px; height: 38px; color: #bcaaa4; border-color: #d7ccc8; background: #efebe9; }
@@ -338,7 +346,6 @@
             border-radius: 20px;
             text-align: left;
             margin-bottom: 25px;
-            /* 變成可愛的筆記本風格 */
             border-left: 6px solid var(--accent-blue);
             box-shadow: 0 5px 15px rgba(0,0,0,0.03);
         }
@@ -359,7 +366,6 @@
 </head>
 <body>
 
-<!-- ✨ 背景飄浮元素 -->
 <div class="floating-bg" id="bg-animation"></div>
 
 <!-- 1. 封面頁 -->
@@ -434,70 +440,41 @@
 </div>
 
 <script>
-    // ==========================================
-    // ⬇️ 圖片路徑設定區 (完全保留原設定) ⬇️
-    // ==========================================
-    
     const imageUrls = {
-        // --- 封面圖 ---
         "cover": "images/cover.jpg",
-
-        // --- 1. 分析家 ---
         "INTJ_boy": "images/INTJ_boy.jpg",
         "INTJ_girl": "images/INTJ_girl.jpg",
-        
         "INTP_boy": "images/INTP_boy.jpg",
         "INTP_girl": "images/INTP_girl.jpg",
-        
         "ENTJ_boy": "images/ENTJ_boy.jpg",
         "ENTJ_girl": "images/ENTJ_girl.jpg",
-        
         "ENTP_boy": "images/ENTP_boy.jpg",
         "ENTP_girl": "images/ENTP_girl.jpg",
-
-        // --- 2. 外交家 ---
         "INFJ_boy": "images/INFJ_boy.jpg",
         "INFJ_girl": "images/INFJ_girl.jpg",
-
         "INFP_boy": "images/INFP_boy.jpg",
         "INFP_girl": "images/INFP_girl.jpg",
-
         "ENFJ_boy": "images/ENFJ_boy.jpg",
         "ENFJ_girl": "images/ENFJ_girl.jpg",
-
         "ENFP_boy": "images/ENFP_boy.jpg",
         "ENFP_girl": "images/ENFP_girl.jpg",
-
-        // --- 3. 守護者 ---
         "ISTJ_boy": "images/ISTJ_boy.jpg",
         "ISTJ_girl": "images/ISTJ_girl.jpg",
-
         "ISFJ_boy": "images/ISFJ_boy.jpg",
         "ISFJ_girl": "images/ISFJ_girl.jpg",
-
         "ESTJ_boy": "images/ESTJ_boy.jpg",
         "ESTJ_girl": "images/ESTJ_girl.jpg",
-
         "ESFJ_boy": "images/ESFJ_boy.jpg",
         "ESFJ_girl": "images/ESFJ_girl.jpg",
-
-        // --- 4. 探險家 ---
         "ISTP_boy": "images/ISTP_boy.jpg",
         "ISTP_girl": "images/ISTP_girl.jpg",
-
         "ISFP_boy": "images/ISFP_boy.jpg",
         "ISFP_girl": "images/ISFP_girl.jpg",
-
         "ESTP_boy": "images/ESTP_boy.jpg",
         "ESTP_girl": "images/ESTP_girl.jpg",
-
         "ESFP_boy": "images/ESFP_boy.jpg",
         "ESFP_girl": "images/ESFP_girl.jpg"
     };
-
-    // ==========================================
-    // ⬆️ 圖片設定結束 ⬆️
-    // ==========================================
 
     window.onload = function() {
         if (imageUrls["cover"]) {
