@@ -74,7 +74,7 @@
             border: 2px solid rgba(255,255,255,0.05);
         }
 
-        /* 圖片容器 - 設定為橫向長方形適配 16:9 */
+        /* 圖片容器 */
         .img-wrapper {
             width: 100%;
             height: 250px; 
@@ -90,7 +90,7 @@
         .img-wrapper img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* 確保圖片填滿框框且不變形 */
+            object-fit: cover;
             transition: transform 0.5s;
         }
 
@@ -370,64 +370,65 @@
 
 <script>
     // ==========================================
-    // ⬇️ 圖片連結設定區 ⬇️
+    // ⬇️ 圖片連結設定區 (已改為相對路徑) ⬇️
+    // 請確保 images 資料夾內的圖片檔名與以下完全一致
     // ==========================================
     
     const imageUrls = {
         // --- 封面圖 ---
-        "cover": "https://i.postimg.cc/Qx0bKSDr/cover.jpg",
+        "cover": "images/cover.jpg",
 
-        // --- 1. 分析家 (INTJ, INTP, ENTJ, ENTP) ---
-        "INTJ_boy": "https://i.postimg.cc/sXByQrgh/INTJ-boy.jpg",
-        "INTJ_girl": "https://i.postimg.cc/bwY7Sh6J/INTJ-girl.jpg",
+        // --- 1. 分析家 ---
+        "INTJ_boy": "images/INTJ_boy.jpg",
+        "INTJ_girl": "images/INTJ_girl.jpg",
         
-        "INTP_boy": "https://i.postimg.cc/Hn2STJ14/INTP-boy.jpg",
-        "INTP_girl": "https://i.postimg.cc/QtZS5g88/INTP-girl.jpg",
+        "INTP_boy": "images/INTP_boy.jpg",
+        "INTP_girl": "images/INTP_girl.jpg",
         
-        "ENTJ_boy": "https://i.postimg.cc/GpGxcBkj/ENTJ-boy.jpg",
-        "ENTJ_girl": "https://i.postimg.cc/J0nXBtBS/ENTJ-girl.jpg",
+        "ENTJ_boy": "images/ENTJ_boy.jpg",
+        "ENTJ_girl": "images/ENTJ_girl.jpg",
         
-        "ENTP_boy": "https://i.postimg.cc/2SpqC02D/ENTP-boy.jpg",
-        "ENTP_girl": "https://i.postimg.cc/Ss5SDKvr/ENTP-girl.jpg",
+        "ENTP_boy": "images/ENTP_boy.jpg",
+        "ENTP_girl": "images/ENTP_girl.jpg",
 
-        // --- 2. 外交家 (INFJ, INFP, ENFJ, ENFP) ---
-        "INFJ_boy": "https://i.postimg.cc/wxmynKQt/INFJ-boy.jpg",
-        "INFJ_girl": "https://i.postimg.cc/3N5R3RFn/INFJ-girl.jpg",
+        // --- 2. 外交家 ---
+        "INFJ_boy": "images/INFJ_boy.jpg",
+        "INFJ_girl": "images/INFJ_girl.jpg",
 
-        "INFP_boy": "https://i.postimg.cc/sxrVtL3K/INFP-boy.jpg",
-        "INFP_girl": "https://i.postimg.cc/dV1qPrKt/INFP-girl.jpg",
+        "INFP_boy": "images/INFP_boy.jpg",
+        "INFP_girl": "images/INFP_girl.jpg",
 
-        "ENFJ_boy": "https://i.postimg.cc/Bnkfrzg1/ENFJ-boy.jpg",
-        "ENFJ_girl": "https://i.postimg.cc/qMDPKFWj/ENFJ-girl.jpg",
+        "ENFJ_boy": "images/ENFJ_boy.jpg",
+        "ENFJ_girl": "images/ENFJ_girl.jpg",
 
-        "ENFP_boy": "https://i.postimg.cc/Zn7Mr9sn/ENFP-boy.jpg",
-        "ENFP_girl": "https://i.postimg.cc/W3sWCmQz/ENFP-girl.jpg",
+        "ENFP_boy": "images/ENFP_boy.jpg",
+        "ENFP_girl": "images/ENFP_girl.jpg",
 
-        // --- 3. 守護者 (ISTJ, ISFJ, ESTJ, ESFJ) ---
-        "ISTJ_boy": "https://i.postimg.cc/2yMxknXs/ISTJ-boy.jpg",
-        "ISTJ_girl": "https://i.postimg.cc/qR7c21P5/ISTJ-girl.jpg",
+        // --- 3. 守護者 ---
+        "ISTJ_boy": "images/ISTJ_boy.jpg",
+        "ISTJ_girl": "images/ISTJ_girl.jpg",
 
-        "ISFJ_boy": "https://i.postimg.cc/ZR03WC3z/ISFJ-boy.jpg",
-        "ISFJ_girl": "https://i.postimg.cc/cLMzs4f8/ISFJ-girl.jpg",
+        "ISFJ_boy": "images/ISFJ_boy.jpg",
+        "ISFJ_girl": "images/ISFJ_girl.jpg",
 
-        "ESTJ_boy": "https://i.postimg.cc/gcCt86DX/ESTJ-boy.jpg",
-        "ESTJ_girl": "https://i.postimg.cc/1tgMN9VD/ESTJ-girl.jpg",
+        "ESTJ_boy": "images/ESTJ_boy.jpg",
+        "ESTJ_girl": "images/ESTJ_girl.jpg",
 
-        "ESFJ_boy": "https://i.postimg.cc/2S2xcq4T/ESFJ-boy.jpg",
-        "ESFJ_girl": "https://i.postimg.cc/59LScKBS/ESFJ-girl.jpg",
+        "ESFJ_boy": "images/ESFJ_boy.jpg",
+        "ESFJ_girl": "images/ESFJ_girl.jpg",
 
-        // --- 4. 探險家 (ISTP, ISFP, ESTP, ESFP) ---
-        "ISTP_boy": "https://i.postimg.cc/zvFhyM7p/ISTP-boy.jpg",
-        "ISTP_girl": "https://i.postimg.cc/26pL2mKr/ISTP-girl.jpg",
+        // --- 4. 探險家 ---
+        "ISTP_boy": "images/ISTP_boy.jpg",
+        "ISTP_girl": "images/ISTP_girl.jpg",
 
-        "ISFP_boy": "https://i.postimg.cc/W1F4KCZX/ISFP-boy.jpg",
-        "ISFP_girl": "https://i.postimg.cc/yx81TbBF/ISFP-girl.jpg",
+        "ISFP_boy": "images/ISFP_boy.jpg",
+        "ISFP_girl": "images/ISFP_girl.jpg",
 
-        "ESTP_boy": "https://i.postimg.cc/fyPNfW83/ESTP-boy.jpg",
-        "ESTP_girl": "https://i.postimg.cc/8c78cQTz/ESTP-girl.jpg",
+        "ESTP_boy": "images/ESTP_boy.jpg",
+        "ESTP_girl": "images/ESTP_girl.jpg",
 
-        "ESFP_boy": "https://i.postimg.cc/hvkYGXCz/ESFP-boy.jpg",
-        "ESFP_girl": "https://i.postimg.cc/ZRCZByLV/ESFP-girl.jpg"
+        "ESFP_boy": "images/ESFP_boy.jpg",
+        "ESFP_girl": "images/ESFP_girl.jpg"
     };
 
     // ==========================================
@@ -588,9 +589,6 @@
         }
     }
 
-    // ==========================================
-    // ⬇️ 修正後的 16 型人格文案 (圖文相符版) ⬇️
-    // ==========================================
     const resultsData = {
         "ISTJ": { 
             title: "盡責大管家", 
