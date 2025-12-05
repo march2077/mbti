@@ -7,23 +7,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* 🎨 修改為：奶油韓系可愛配色 */
-            --bg-color: #fffaf0; /* 溫暖的奶油底色 */
+            /* 🎨 配色設定 */
+            --bg-color: #fffaf0; 
             
-            /* ✅ 卡片底色：維持您要求的柔和淡粉色 */
+            /* ✅ 卡片底色：柔和淡粉色 */
             --card-bg: #ffe1e6;
             
-            --text-main: #5d4037; /* 像巧克力的深褐色文字 */
+            --text-main: #5d4037;
             --text-sub: #8d6e63;
             
-            /* 🍬 馬卡龍點綴色 */
-            --accent-pink: #ffb7c5; /* 櫻花粉 */
+            /* 🍬 點綴色 */
+            --accent-pink: #ffb7c5;
             --accent-pink-dark: #ff8fa3;
-            --accent-blue: #a0e7e5; /* 蒂芬妮綠/藍 */
+            --accent-blue: #a0e7e5;
             --accent-yellow: #fff59d;
             --accent-purple: #e0bbe4;
             
-            --border-radius: 30px; /* 變得更圓潤 */
+            --border-radius: 30px;
             --shadow: 0 10px 30px rgba(255, 143, 163, 0.4);
         }
 
@@ -56,7 +56,7 @@
         .paw-bg {
             position: absolute;
             font-size: 2rem;
-            opacity: 0; /* 修正背景特效堆積問題 */
+            opacity: 0;
             animation: floatUp 20s infinite linear;
             top: 0;
         }
@@ -79,31 +79,48 @@
             box-shadow: var(--shadow);
             text-align: center;
             transition: all 0.3s ease;
-            border: 5px solid #fff; /* 像拍立得照片的白邊 */
+            border: 5px solid #fff;
         }
 
+        /* 👇👇👇 重點修改區：圖片美顏特效 👇👇👇 */
         .img-wrapper {
             width: 100%;
             height: 280px; 
             border-radius: 25px;
             overflow: hidden;
             margin-bottom: 25px;
-            border: 6px solid var(--accent-pink); 
-            box-shadow: 0 8px 20px rgba(189, 100, 116, 0.3);
+            
+            /* 1. 改成白色粗邊框 (拍立得風格)，做為深色圖片與粉色背景的緩衝 */
+            border: 8px solid #ffffff; 
+            
+            /* 粉色外發光陰影 */
+            box-shadow: 0 8px 20px rgba(255, 183, 197, 0.6);
+            
             position: relative;
-            background-color: #fff0f5;
+            background-color: #fff;
         }
 
         .img-wrapper img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s;
+            transition: transform 0.5s, filter 0.5s;
+            
+            /* 2. CSS 濾鏡魔法：
+               brightness(1.15) -> 亮度提升 15%
+               contrast(0.95)   -> 對比降低 5% (讓陰影變柔和，不死黑)
+               saturate(1.2)    -> 飽和度提升 20% (讓色彩更鮮豔)
+               sepia(0.15)      -> 疊加 15% 暖黃色 (讓色溫變暖，融入奶油背景)
+            */
+            filter: brightness(1.15) contrast(0.95) saturate(1.2) sepia(0.15);
         }
 
         .img-wrapper:hover img {
+            /* 滑鼠移上去時，稍微再亮一點，並且歪頭 */
             transform: scale(1.08) rotate(2deg);
+            filter: brightness(1.2) contrast(1) saturate(1.25) sepia(0.1);
         }
+        /* 👆👆👆 修改結束 👆👆👆 */
 
         h1 {
             margin: 0 0 10px 0;
@@ -172,7 +189,7 @@
         }
         
         .btn-gender {
-            /* ✅ 未選中：維持淡奶黃色 */
+            /* ✅ 未選中：淡奶黃色 */
             background: #fffde7; 
             
             border: 3px solid #f0f0f0;
@@ -195,10 +212,8 @@
 
         .btn-gender.selected {
             border-color: var(--accent-pink-dark);
-            
-            /* 👇 修改處：將選中時的底色加深 (改成櫻花粉)，避免跟卡片背景混淆 */
+            /* ✅ 選中時：深粉色 (與卡片背景區分) */
             background: #ffb7c5; 
-            
             box-shadow: 0 0 0 4px rgba(255, 183, 197, 0.3);
         }
 
