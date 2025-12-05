@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NaNa西高地白梗 MBTI 深度人格測試</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- 引入 Google Icons (只為了"再玩一次"的按鈕使用) -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Noto+Sans+TC:wght@400;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,700,1,0&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             /* 🎨 配色設定 */
             --bg-color: #fffaf0; 
-            
-            /* ✅ 卡片底色：柔和淡粉色 */
-            --card-bg: #ffe1e6;
+            --card-bg: #ffe1e6; /* 柔和淡粉色 */
             
             --text-main: #5d4037;
             --text-sub: #8d6e63;
             
-            /* 🍬 點綴色 */
             --accent-pink: #ffb7c5;
             --accent-pink-dark: #ff8fa3;
             --accent-blue: #a0e7e5;
@@ -40,6 +40,12 @@
             align-items: center;
             min-height: 100vh;
             overflow-x: hidden;
+        }
+
+        /* 設定再玩一次圖標的樣式 */
+        .material-symbols-rounded {
+            vertical-align: text-bottom;
+            font-size: 1.1em;
         }
 
         .floating-bg {
@@ -82,20 +88,15 @@
             border: 5px solid #fff;
         }
 
-        /* 👇👇👇 重點修改區：圖片美顏特效 👇👇👇 */
+        /* 圖片容器與美顏特效 */
         .img-wrapper {
             width: 100%;
             height: 280px; 
             border-radius: 25px;
             overflow: hidden;
             margin-bottom: 25px;
-            
-            /* 1. 改成白色粗邊框 (拍立得風格)，做為深色圖片與粉色背景的緩衝 */
             border: 8px solid #ffffff; 
-            
-            /* 粉色外發光陰影 */
             box-shadow: 0 8px 20px rgba(255, 183, 197, 0.6);
-            
             position: relative;
             background-color: #fff;
         }
@@ -105,22 +106,13 @@
             height: 100%;
             object-fit: cover;
             transition: transform 0.5s, filter 0.5s;
-            
-            /* 2. CSS 濾鏡魔法：
-               brightness(1.15) -> 亮度提升 15%
-               contrast(0.95)   -> 對比降低 5% (讓陰影變柔和，不死黑)
-               saturate(1.2)    -> 飽和度提升 20% (讓色彩更鮮豔)
-               sepia(0.15)      -> 疊加 15% 暖黃色 (讓色溫變暖，融入奶油背景)
-            */
             filter: brightness(1.15) contrast(0.95) saturate(1.2) sepia(0.15);
         }
 
         .img-wrapper:hover img {
-            /* 滑鼠移上去時，稍微再亮一點，並且歪頭 */
             transform: scale(1.08) rotate(2deg);
             filter: brightness(1.2) contrast(1) saturate(1.25) sepia(0.1);
         }
-        /* 👆👆👆 修改結束 👆👆👆 */
 
         h1 {
             margin: 0 0 10px 0;
@@ -158,6 +150,18 @@
             margin-top: 10px;
             position: relative;
             overflow: hidden;
+            
+            /* 讓按鈕內的圖標跟文字對齊 */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        /* 讓按鈕裡的 Google Icon 變成白色 */
+        .btn-primary .material-symbols-rounded {
+            color: #fff; 
+            font-size: 1.3rem;
         }
         
         .btn-primary::after {
@@ -189,9 +193,7 @@
         }
         
         .btn-gender {
-            /* ✅ 未選中：淡奶黃色 */
             background: #fffde7; 
-            
             border: 3px solid #f0f0f0;
             border-radius: 25px;
             padding: 20px;
@@ -212,7 +214,6 @@
 
         .btn-gender.selected {
             border-color: var(--accent-pink-dark);
-            /* ✅ 選中時：深粉色 (與卡片背景區分) */
             background: #ffb7c5; 
             box-shadow: 0 0 0 4px rgba(255, 183, 197, 0.3);
         }
@@ -388,6 +389,7 @@
     <div class="img-wrapper">
         <img src="" alt="Westie Cover" id="cover-img">
     </div>
+    <!-- 👇 換回原本的 Emoji 狗爪 (兩個腳印) -->
     <h1>🐾 NaNa西高地 <br>MBTI 人格測試</h1>
     <p>透過行為分析，找出你家寶貝的隱藏性格！<br>（可愛特別版 ✨）</p>
     <button class="btn-primary" onclick="goToGender()">開始測試 GO!</button>
@@ -451,7 +453,8 @@
         <p id="result-desc" style="font-size: 1rem;">結果描述...</p>
     </div>
 
-    <button class="btn-primary" onclick="restart()">再玩一次 🔄</button>
+    <!-- 👇 保留：這裡使用 Google Icons (Material Symbols) 的刷新符號 -->
+    <button class="btn-primary" onclick="restart()">再玩一次 <span class="material-symbols-rounded">refresh</span></button>
 </div>
 
 <script>
@@ -501,7 +504,9 @@
     function createBackground() {
         const bg = document.getElementById('bg-animation');
         const items = ['🌸', '🦴', '🐾', '💖', '⭐', '🐶']; 
-        const colors = ['#ffb7c5', '#a0e7e5', '#fff59d', '#e0bbe4'];
+        
+        // 背景飄浮的顏色：保留粉色、黃色，加回一點藍色點綴，因為使用者喜歡之前的風格
+        const colors = ['#ffb7c5', '#ff8fa3', '#fff59d', '#e0bbe4', '#a0e7e5'];
         
         for(let i=0; i<15; i++) {
             const el = document.createElement('div');
