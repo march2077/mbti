@@ -7,34 +7,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* 🎨 配色修正：徹底消滅白色底 */
+            /* 🎨 修改為：奶油韓系可愛配色 */
+            --bg-color: #fffaf0; /* 溫暖的奶油底色 */
             
-            /* 文字顏色：深紅褐色，像巧克力醬，配粉紅最搭 */
-            --text-main: #88495c; 
-            --text-sub: #b07d8d;
+            /* 👇 修改處 1：將卡片背景改為粉色系 (Misty Rose)，不會太淺看不見 */
+            --card-bg: #ffe4e1; 
             
-            /* 🍬 核心配色：草莓牛奶多巴胺 */
-            --bg-gradient-start: #ffdde1;
-            --bg-gradient-end: #ee9ca7;
+            --text-main: #5d4037; /* 像巧克力的深褐色文字 */
+            --text-sub: #8d6e63;
             
-            /* 中間卡片的底色：不再是白色！改成淡粉紅 */
-            --card-bg-color: #fff0f5; /* Lavender Blush */
-            --card-gradient: linear-gradient(180deg, #fff0f5 0%, #ffeef2 100%);
-            
-            /* 馬卡龍點綴色 */
-            --accent-pink: #ff9a9e;
-            --accent-purple: #c5a3ff;
-            --accent-blue: #a2d2ff;
+            /* 🍬 馬卡龍點綴色 */
+            --accent-pink: #ffb7c5; /* 櫻花粉 */
+            --accent-pink-dark: #ff8fa3;
+            --accent-blue: #a0e7e5; /* 蒂芬妮綠/藍 */
             --accent-yellow: #fff59d;
+            --accent-purple: #e0bbe4;
             
-            --border-radius: 35px;
-            --shadow: 0 15px 35px rgba(255, 126, 179, 0.4); 
+            --border-radius: 30px; /* 變得更圓潤 */
+            --shadow: 0 10px 30px rgba(255, 183, 197, 0.3);
         }
 
         body {
             font-family: 'Fredoka', 'Noto Sans TC', sans-serif;
-            /* 背景：濃郁的粉紅漸層 */
-            background: linear-gradient(135deg, #ffc3a0 0%, #ffafbd 100%);
+            background-color: var(--bg-color);
+            /* 增加可愛的背景波點 */
+            background-image: radial-gradient(#ffecb3 20%, transparent 20%), radial-gradient(#ffecb3 20%, transparent 20%);
+            background-position: 0 0, 25px 25px;
+            background-size: 50px 50px;
             color: var(--text-main);
             margin: 0;
             display: flex;
@@ -44,7 +43,7 @@
             overflow-x: hidden;
         }
 
-        /* 浮動裝飾 */
+        /* ✨ 新增：背景飄浮裝飾 (不影響內容) */
         .floating-bg {
             position: fixed;
             top: 0;
@@ -55,57 +54,53 @@
             z-index: 0;
             overflow: hidden;
         }
-
+        
         .paw-bg {
             position: absolute;
-            top: 100%;
             font-size: 2rem;
-            opacity: 0.6;
+            
+            /* 👇 修改處 2：初始設為全透明。
+               解決問題：元素在等待動畫延遲(delay)期間，原本會擠在畫面頂端。
+               現在它們會隱藏，直到 keyframes 動畫開始執行才顯示。 */
+            opacity: 0; 
+            
             animation: floatUp 20s infinite linear;
-            animation-fill-mode: both;
-            text-shadow: 2px 2px 0px rgba(255,255,255,0.3);
+            top: 0; /* 確保基準位置 */
         }
 
         @keyframes floatUp {
-            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.8; }
-            90% { opacity: 0.8; }
-            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.8; }
+            80% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
         }
 
-        /* 📦 重點修改區域：中間的卡片 */
         .container {
             position: relative;
             z-index: 10;
             width: 88%;
             max-width: 500px;
-            
-            /* ❌ 刪除原本的 background: #fff */
-            /* ✅ 改成：淡粉紅漸層 */
-            background: var(--card-gradient);
-            
+            background: var(--card-bg);
             padding: 40px 30px;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             text-align: center;
             transition: all 0.3s ease;
-            
-            /* ✅ 邊框也改成粉色，不要白色 */
-            border: 6px solid #ffc3d0; 
+            border: 5px solid #fff; /* 像拍立得照片的白邊 */
         }
 
-        /* 圖片容器 */
+        /* 圖片容器：改成圓角更柔和的風格 */
         .img-wrapper {
             width: 100%;
             height: 280px; 
-            border-radius: 30px;
+            border-radius: 25px;
             overflow: hidden;
             margin-bottom: 25px;
-            /* 圖片框底色也改成粉紅 */
-            background-color: #ffe6ea; 
-            border: 5px solid #ff9a9e; 
-            box-shadow: 0 5px 15px rgba(255, 154, 158, 0.4);
+            /* 加上可愛的粉色邊框 */
+            border: 6px solid var(--accent-pink); 
+            box-shadow: 0 8px 20px rgba(255, 183, 197, 0.4);
             position: relative;
+            background-color: #fff0f5;
         }
 
         .img-wrapper img {
@@ -116,19 +111,14 @@
         }
 
         .img-wrapper:hover img {
-            transform: scale(1.08) rotate(2deg);
+            transform: scale(1.08) rotate(2deg); /* 滑鼠移過去會可愛地歪頭 */
         }
 
         h1 {
             margin: 0 0 10px 0;
-            /* 標題改成糖果漸層 */
-            background: linear-gradient(to right, #ff758c, #ff7eb3);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 2rem;
+            color: var(--accent-pink-dark);
+            font-size: 1.8rem;
             letter-spacing: 1px;
-            font-weight: 800;
-            filter: drop-shadow(1px 1px 0px rgba(255,255,255,0.5));
         }
 
         h2 {
@@ -140,117 +130,147 @@
             color: var(--text-sub);
             line-height: 1.6;
             margin-bottom: 30px;
-            font-weight: 600;
+            font-weight: 500;
         }
 
-        /* 主按鈕：草莓果醬感 */
+        /* 按鈕樣式：果凍感 */
         .btn-primary {
-            background: linear-gradient(to bottom right, #ff9a9e, #fecfef);
-            color: #fff;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-pink-dark));
+            color: white;
             border: none;
-            padding: 18px 40px;
-            font-size: 1.3rem;
+            padding: 15px 40px;
+            font-size: 1.2rem;
             border-radius: 50px;
             cursor: pointer;
             font-weight: bold;
-            box-shadow: 0 8px 20px rgba(255, 154, 158, 0.5);
-            transition: transform 0.2s;
-            width: 90%;
+            box-shadow: 0 6px 15px rgba(255, 143, 163, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 85%;
             margin-top: 10px;
-            text-shadow: 1px 1px 2px rgba(160, 90, 90, 0.2);
-            border: 2px solid #fff0f5; /* 微微的白邊增加立體感 */
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 按鈕上的光澤感 */
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: rgba(255,255,255,0.25);
+            border-radius: 50px 50px 0 0;
         }
 
         .btn-primary:hover {
-            transform: translateY(-5px) scale(1.02);
-            background: linear-gradient(to bottom right, #fecfef, #ff9a9e);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(255, 143, 163, 0.6);
         }
 
-        /* 性別選項按鈕 */
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* 性別選擇按鈕 */
         .gender-options {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 20px;
             margin-bottom: 30px;
         }
         
         .btn-gender {
-            /* ✅ 按鈕底色：淡粉紅，不是白色 */
-            background: #fff5f7; 
-            border: 3px solid #ffdee6;
-            border-radius: 30px;
-            padding: 15px;
-            width: 140px;
+            background: #fff;
+            border: 3px solid #f0f0f0;
+            border-radius: 25px;
+            padding: 20px;
+            width: 130px;
             cursor: pointer;
             transition: all 0.3s;
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: var(--text-main);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.05);
         }
 
         .btn-gender:hover {
+            background: #fff0f5;
             border-color: var(--accent-pink);
             transform: translateY(-5px);
-            background: #ffeef2;
         }
 
         .btn-gender.selected {
-            border-color: #ff7eb3;
-            background: #ffdee6;
-            box-shadow: 0 0 0 4px rgba(255, 126, 179, 0.2);
+            border-color: var(--accent-pink-dark);
+            background: #ffebee;
+            box-shadow: 0 0 0 4px rgba(255, 183, 197, 0.3);
         }
 
         .gender-icon {
             font-size: 3.5rem;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1));
+        }
+
+        .gender-text {
+            color: var(--text-main);
+            font-weight: bold;
         }
 
         /* 進度條 */
         .progress-track {
             width: 100%;
-            height: 20px;
-            background: #ffeef2; /* 軌道也是淡粉 */
+            height: 18px;
+            background: #f0f0f0;
             border-radius: 20px;
             margin-bottom: 30px;
             overflow: hidden;
-            border: 2px solid #ffdee6;
+            position: relative;
+            border: 2px solid #fff;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #a2d2ff, #ff9a9e);
+            background: repeating-linear-gradient(
+                45deg,
+                var(--accent-blue),
+                var(--accent-blue) 10px,
+                #b4f0ee 10px,
+                #b4f0ee 20px
+            ); /* 糖果條紋效果 */
             width: 0%;
-            transition: width 0.4s;
+            transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border-radius: 20px;
         }
 
-        /* 題目卡片 */
+        /* 題目樣式 */
         .question-card {
-            min-height: 140px;
+            min-height: 130px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 25px;
-            /* ✅ 題目底色：淡黃色配粉紅框 */
-            background: #fffde7; 
-            border-radius: 25px;
-            padding: 20px;
-            border: 3px dashed #ffc3a0;
+            background: #fffbf0; /* 淡黃色卡片背景 */
+            border-radius: 20px;
+            padding: 15px;
+            border: 2px dashed var(--accent-yellow);
         }
 
         .question-text {
-            font-size: 1.35rem;
-            font-weight: 700;
-            color: #88495c;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.5;
         }
 
+        /* 5分量表選項 */
         .options-scale {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 5px;
-            margin-top: 25px;
+            gap: 8px;
+            margin-top: 20px;
         }
 
         .scale-btn {
@@ -261,91 +281,83 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.8rem;
-            /* ✅ 選項按鈕底色：極淡粉 */
-            background: #fff9fa;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            font-size: 1.6rem;
+            background: #ffffff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
         }
 
         .scale-btn:hover {
-            transform: scale(1.2) translateY(-5px);
+            transform: scale(1.15) rotate(10deg);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
 
-        /* 表情按鈕顏色 */
-        .scale-1 { width: 50px; height: 50px; border-color: #ff9a9e; color: #ff9a9e; }
-        .scale-2 { width: 44px; height: 44px; border-color: #ffb7b2; color: #ffb7b2; }
-        .scale-3 { width: 40px; height: 40px; border-color: #dcdcdc; color: #aaa; }
-        .scale-4 { width: 44px; height: 44px; border-color: #a2d2ff; color: #a2d2ff; }
-        .scale-5 { width: 50px; height: 50px; border-color: #c5a3ff; color: #c5a3ff; }
+        /* 定義每個表情的顏色邊框 - 改為柔和色系 */
+        .scale-1 { width: 50px; height: 50px; color: #ff8a80; border-color: #ffcdd2; background: #ffebee; }
+        .scale-2 { width: 42px; height: 42px; color: #ffab91; border-color: #ffccbc; background: #fbe9e7; }
+        .scale-3 { width: 38px; height: 38px; color: #bcaaa4; border-color: #d7ccc8; background: #efebe9; }
+        .scale-4 { width: 42px; height: 42px; color: #a5d6a7; border-color: #c8e6c9; background: #e8f5e9; }
+        .scale-5 { width: 50px; height: 50px; color: #66bb6a; border-color: #a5d6a7; background: #c8e6c9; }
 
         .labels {
             display: flex;
             justify-content: space-between;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: var(--text-sub);
             margin-top: 15px;
-            padding: 0 15px;
+            padding: 0 10px;
             font-weight: bold;
         }
 
         /* 結果頁 */
         .result-type {
-            font-size: 4rem;
-            font-weight: 900;
-            color: #ff7eb3;
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--accent-pink-dark);
+            text-shadow: 3px 3px 0px #fff, 5px 5px 0px rgba(0,0,0,0.05);
             margin-bottom: 5px;
             font-family: 'Fredoka', cursive;
-            text-shadow: 3px 3px 0px #fff;
         }
         
         .result-title {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: bold;
             color: var(--text-main);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
-
+        
         .tags {
             display: flex;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
             margin-bottom: 25px;
         }
 
         .tag {
-            background: #fff9fa; /* 淡粉 */
-            padding: 8px 20px;
-            border-radius: 50px;
-            font-size: 1rem;
-            color: #88495c;
-            border: 2px solid #a2d2ff;
-            box-shadow: 3px 3px 0px #a2d2ff;
+            background: var(--accent-yellow);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            color: #795548;
+            border: 2px solid #fff;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
             font-weight: bold;
         }
 
         .desc-box {
-            background: #fff9fa; /* 淡粉 */
-            padding: 30px;
-            border-radius: 25px;
+            background: #fff;
+            padding: 25px;
+            border-radius: 20px;
             text-align: left;
             margin-bottom: 25px;
-            border: 3px dashed #c5a3ff;
-            position: relative;
-        }
-        
-        .desc-box::before {
-            content: '💖';
-            position: absolute;
-            top: -15px;
-            left: 20px;
-            font-size: 1.8rem;
+            /* 變成可愛的筆記本風格 */
+            border-left: 6px solid var(--accent-blue);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
         }
 
         .desc-box p {
             margin: 0;
-            color: var(--text-main);
-            font-size: 1.1rem;
+            color: #5d4037;
         }
 
         .fade-in { animation: fadeIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -359,22 +371,23 @@
 </head>
 <body>
 
-<!-- 背景飄浮元素 -->
+<!-- ✨ 背景飄浮元素 (增加可愛感) -->
 <div class="floating-bg" id="bg-animation"></div>
 
 <!-- 1. 封面頁 -->
 <div class="container fade-in" id="start-page">
     <div class="img-wrapper">
+        <!-- 這裡是原本的邏輯，會讀取 images/cover.jpg -->
         <img src="" alt="Westie Cover" id="cover-img">
     </div>
-    <h1>✨NaNa西高地✨<br>MBTI 人格測試</h1>
-    <p>💖 找出你家寶貝的靈魂色彩！ 💖<br>(多巴胺全粉紅版)</p>
+    <h1>🐾 NaNa西高地 <br>MBTI 人格測試</h1>
+    <p>透過行為分析，找出你家寶貝的隱藏性格！<br>（可愛特別版 ✨）</p>
     <button class="btn-primary" onclick="goToGender()">開始測試 GO!</button>
 </div>
 
 <!-- 2. 性別選擇頁 -->
 <div class="container hidden" id="gender-page">
-    <h2>🎀 請問寶貝是？</h2>
+    <h2>🐶 請問寶貝是？</h2>
     <p>選個性別，讓我們幫你搭配造型！</p>
     
     <div class="gender-options">
@@ -405,7 +418,7 @@
         <button class="scale-btn scale-1" onclick="answer(1)">😤</button>
         <button class="scale-btn scale-2" onclick="answer(2)">🤔</button>
         <button class="scale-btn scale-3" onclick="answer(3)">😐</button>
-        <button class="scale-btn scale-4" onclick="answer(4)">😘</button>
+        <button class="scale-btn scale-4" onclick="answer(4)">☺️</button>
         <button class="scale-btn scale-5" onclick="answer(5)">😍</button>
     </div>
     <div class="labels">
@@ -417,7 +430,7 @@
 <!-- 4. 結果頁 -->
 <div class="container hidden" id="result-page">
     <h2>✨ 測驗結果出爐 ✨</h2>
-    <div class="img-wrapper" id="result-img-container">
+    <div class="img-wrapper" id="result-img-container" style="border-color: var(--accent-pink);">
         <img id="result-img" src="" alt="Result Dog">
     </div>
     
@@ -427,7 +440,7 @@
     <div class="tags" id="result-tags"></div>
 
     <div class="desc-box">
-        <p id="result-desc">結果描述...</p>
+        <p id="result-desc" style="font-size: 1rem;">結果描述...</p>
     </div>
 
     <button class="btn-primary" onclick="restart()">再玩一次 🔄</button>
@@ -435,7 +448,8 @@
 
 <script>
     // ==========================================
-    // ⬇️ 圖片路徑 (完全保留原設定) ⬇️
+    // ⬇️ 圖片路徑設定區 (完全保留原設定) ⬇️
+    // 請確保 images 資料夾內的圖片檔名與以下完全一致
     // ==========================================
     
     const imageUrls = {
@@ -499,6 +513,7 @@
     // ⬆️ 圖片設定結束 ⬆️
     // ==========================================
 
+    // 初始化：設定封面圖 & 啟動背景動畫
     window.onload = function() {
         if (imageUrls["cover"]) {
             document.getElementById('cover-img').src = imageUrls["cover"];
@@ -506,29 +521,33 @@
         createBackground();
     };
 
+    // ✨ 新增：背景動畫生成 (飄浮小圖案)
     function createBackground() {
         const bg = document.getElementById('bg-animation');
-        const items = ['🍬', '🍭', '🎀', '💖', '✨', '🐶', '🌸', '🧁']; 
-        const colors = ['#ff9a9e', '#a18cd1', '#fbc2eb', '#a2d2ff'];
+        // 這些是飄浮在背景的裝飾，不會影響你的主要圖片
+        const items = ['🌸', '🦴', '🐾', '💖', '⭐', '🐶']; 
+        const colors = ['#ffb7c5', '#a0e7e5', '#fff59d', '#e0bbe4'];
         
-        for(let i=0; i<20; i++) {
+        for(let i=0; i<15; i++) {
             const el = document.createElement('div');
             el.className = 'paw-bg';
             el.innerText = items[Math.floor(Math.random() * items.length)];
-            el.style.left = Math.random() * 95 + '%';
+            el.style.left = Math.random() * 100 + '%';
             el.style.color = colors[Math.floor(Math.random() * colors.length)];
-            const duration = 15 + Math.random() * 20;
-            el.style.animationDuration = duration + 's';
-            el.style.animationDelay = (Math.random() * -30) + 's';
-            el.style.fontSize = (1.2 + Math.random() * 2) + 'rem';
+            // 隨機動畫速度
+            el.style.animationDuration = (15 + Math.random() * 20) + 's';
+            el.style.animationDelay = (Math.random() * 10) + 's';
+            el.style.fontSize = (1.5 + Math.random() * 1.5) + 'rem';
             bg.appendChild(el);
         }
     }
 
+    // 變數
     let currentQ = 0;
     let scores = { EI: 0, SN: 0, TF: 0, JP: 0 };
     let selectedGender = null;
 
+    // 流程控制
     function goToGender() {
         document.getElementById('start-page').classList.add('hidden');
         const gPage = document.getElementById('gender-page');
@@ -545,7 +564,7 @@
 
     function confirmGender() {
         if (!selectedGender) {
-            alert("請先選擇狗狗的性別喔！🎀");
+            alert("請先選擇狗狗的性別喔！🐶");
             return;
         }
         document.getElementById('gender-page').classList.add('hidden');
@@ -559,6 +578,7 @@
         loadQuestion();
     }
 
+    // 題目數據 (保持不變)
     const questions = [
         { text: "去狗公園時，牠會主動跑去跟每一隻狗打招呼。", dim: 'EI', weight: 1 },
         { text: "家裡有陌生客人來，牠會躲在沙發下或遠處觀察。", dim: 'EI', weight: -1 },
@@ -631,13 +651,16 @@
             tagsDiv.appendChild(span);
         });
 
+        // 圖片處理 (使用原邏輯)
         const img = document.getElementById('result-img');
         const key = type + "_" + selectedGender; 
         
+        // 這裡確保讀取的是上面定義的 imageUrls 物件中的本地路徑
         if (imageUrls[key]) {
             img.src = imageUrls[key];
         } else {
-            img.src = `https://via.placeholder.com/600x600/ff9a9e/ffffff?text=${type}`;
+            // 萬一圖片不見了，給一個佔位符，但基本上會讀到你的圖
+            img.src = `https://via.placeholder.com/600x600/ffb7c5/ffffff?text=${type}+${selectedGender}`;
         }
     }
 
