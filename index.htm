@@ -7,26 +7,30 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* 暗黑可愛配色 */
-            --bg-color: #23232e;
-            --card-bg: #2e2e3a;
-            --text-main: #ffffff;
-            --text-sub: #b0b0b0;
+            /* 🎨 修改為：奶油韓系可愛配色 */
+            --bg-color: #fffaf0; /* 溫暖的奶油底色 */
+            --card-bg: #ffffff;
+            --text-main: #5d4037; /* 像巧克力的深褐色文字 */
+            --text-sub: #8d6e63;
             
-            /* 糖果霓虹色系 */
-            --accent-pink: #ff7eb3;
-            --accent-blue: #7afcff;
-            --accent-yellow: #feff9c;
-            --accent-purple: #a480cf;
+            /* 🍬 馬卡龍點綴色 */
+            --accent-pink: #ffb7c5; /* 櫻花粉 */
+            --accent-pink-dark: #ff8fa3;
+            --accent-blue: #a0e7e5; /* 蒂芬妮綠/藍 */
+            --accent-yellow: #fff59d;
+            --accent-purple: #e0bbe4;
             
-            --border-radius: 24px;
+            --border-radius: 30px; /* 變得更圓潤 */
+            --shadow: 0 10px 30px rgba(255, 183, 197, 0.3);
         }
 
         body {
             font-family: 'Fredoka', 'Noto Sans TC', sans-serif;
             background-color: var(--bg-color);
-            background-image: radial-gradient(#3a3a4d 1px, transparent 1px);
-            background-size: 20px 20px;
+            /* 增加可愛的背景波點 */
+            background-image: radial-gradient(#ffecb3 20%, transparent 20%), radial-gradient(#ffecb3 20%, transparent 20%);
+            background-position: 0 0, 25px 25px;
+            background-size: 50px 50px;
             color: var(--text-main);
             margin: 0;
             display: flex;
@@ -36,7 +40,7 @@
             overflow-x: hidden;
         }
 
-        /* 浮動的裝飾背景 */
+        /* ✨ 新增：背景飄浮裝飾 (不影響內容) */
         .floating-bg {
             position: fixed;
             top: 0;
@@ -49,42 +53,44 @@
         }
         .paw-bg {
             position: absolute;
-            font-size: 3rem;
-            opacity: 0.05;
-            color: white;
-            animation: floatUp 15s infinite linear;
+            font-size: 2rem;
+            opacity: 0.6;
+            animation: floatUp 20s infinite linear;
         }
 
         @keyframes floatUp {
-            0% { transform: translateY(100vh) rotate(0deg); }
-            100% { transform: translateY(-10vh) rotate(360deg); }
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.8; }
+            80% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
         }
 
         .container {
             position: relative;
             z-index: 10;
-            width: 90%;
-            max-width: 480px;
+            width: 88%;
+            max-width: 500px;
             background: var(--card-bg);
             padding: 40px 30px;
             border-radius: var(--border-radius);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 20px rgba(255, 126, 179, 0.2);
+            box-shadow: var(--shadow);
             text-align: center;
             transition: all 0.3s ease;
-            border: 2px solid rgba(255,255,255,0.05);
+            border: 5px solid #fff; /* 像拍立得照片的白邊 */
         }
 
-        /* 圖片容器 */
+        /* 圖片容器：改成圓角更柔和的風格 */
         .img-wrapper {
             width: 100%;
-            height: 250px; 
-            border-radius: 20px;
+            height: 280px; 
+            border-radius: 25px;
             overflow: hidden;
             margin-bottom: 25px;
-            border: 4px solid var(--accent-pink);
-            box-shadow: 0 0 15px var(--accent-pink);
+            /* 加上可愛的粉色邊框 */
+            border: 6px solid var(--accent-pink); 
+            box-shadow: 0 8px 20px rgba(255, 183, 197, 0.4);
             position: relative;
-            background-color: #000;
+            background-color: #fff0f5;
         }
 
         .img-wrapper img {
@@ -95,24 +101,31 @@
         }
 
         .img-wrapper:hover img {
-            transform: scale(1.05);
+            transform: scale(1.08) rotate(2deg); /* 滑鼠移過去會可愛地歪頭 */
         }
 
-        h1, h2 {
-            margin: 0 0 15px 0;
-            color: var(--accent-blue);
-            text-shadow: 0 0 10px rgba(122, 252, 255, 0.5);
+        h1 {
+            margin: 0 0 10px 0;
+            color: var(--accent-pink-dark);
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            color: var(--text-main);
+            margin-bottom: 15px;
         }
 
         p {
             color: var(--text-sub);
             line-height: 1.6;
             margin-bottom: 30px;
+            font-weight: 500;
         }
 
-        /* 按鈕樣式 */
+        /* 按鈕樣式：果凍感 */
         .btn-primary {
-            background: linear-gradient(45deg, var(--accent-pink), var(--accent-purple));
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-pink-dark));
             color: white;
             border: none;
             padding: 15px 40px;
@@ -120,15 +133,33 @@
             border-radius: 50px;
             cursor: pointer;
             font-weight: bold;
-            box-shadow: 0 10px 20px rgba(255, 126, 179, 0.4);
+            box-shadow: 0 6px 15px rgba(255, 143, 163, 0.4);
             transition: transform 0.2s, box-shadow 0.2s;
-            width: 80%;
+            width: 85%;
             margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 按鈕上的光澤感 */
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: rgba(255,255,255,0.25);
+            border-radius: 50px 50px 0 0;
         }
 
         .btn-primary:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 15px 30px rgba(255, 126, 179, 0.6);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(255, 143, 163, 0.6);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
         }
 
         /* 性別選擇按鈕 */
@@ -140,71 +171,87 @@
         }
         
         .btn-gender {
-            background: rgba(255,255,255,0.1);
-            border: 2px solid transparent;
-            border-radius: 20px;
+            background: #fff;
+            border: 3px solid #f0f0f0;
+            border-radius: 25px;
             padding: 20px;
-            width: 140px;
+            width: 130px;
             cursor: pointer;
             transition: all 0.3s;
             display: flex;
             flex-direction: column;
             align-items: center;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.05);
         }
 
         .btn-gender:hover {
-            background: rgba(255,255,255,0.2);
+            background: #fff0f5;
+            border-color: var(--accent-pink);
             transform: translateY(-5px);
         }
 
         .btn-gender.selected {
-            border-color: var(--accent-blue);
-            background: rgba(122, 252, 255, 0.1);
-            box-shadow: 0 0 15px rgba(122, 252, 255, 0.3);
+            border-color: var(--accent-pink-dark);
+            background: #ffebee;
+            box-shadow: 0 0 0 4px rgba(255, 183, 197, 0.3);
         }
 
         .gender-icon {
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 10px;
+            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1));
         }
 
         .gender-text {
-            color: white;
+            color: var(--text-main);
             font-weight: bold;
         }
 
         /* 進度條 */
         .progress-track {
             width: 100%;
-            height: 12px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
+            height: 18px;
+            background: #f0f0f0;
+            border-radius: 20px;
             margin-bottom: 30px;
             overflow: hidden;
             position: relative;
+            border: 2px solid #fff;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--accent-blue), var(--accent-pink));
+            background: repeating-linear-gradient(
+                45deg,
+                var(--accent-blue),
+                var(--accent-blue) 10px,
+                #b4f0ee 10px,
+                #b4f0ee 20px
+            ); /* 糖果條紋效果 */
             width: 0%;
             transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border-radius: 10px;
+            border-radius: 20px;
         }
 
         /* 題目樣式 */
         .question-card {
-            min-height: 120px;
+            min-height: 130px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            background: #fffbf0; /* 淡黃色卡片背景 */
+            border-radius: 20px;
+            padding: 15px;
+            border: 2px dashed var(--accent-yellow);
         }
 
         .question-text {
             font-size: 1.3rem;
             font-weight: 600;
-            color: white;
+            color: var(--text-main);
+            line-height: 1.5;
         }
 
         /* 5分量表選項 */
@@ -212,50 +259,60 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             margin-top: 20px;
         }
 
         .scale-btn {
             border-radius: 50%;
-            border: 2px solid transparent;
+            border: 3px solid transparent;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.5rem;
-            background: rgba(255,255,255,0.05);
+            font-size: 1.6rem;
+            background: #ffffff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
         }
 
         .scale-btn:hover {
-            transform: scale(1.2);
-            background: rgba(255,255,255,0.2);
+            transform: scale(1.15) rotate(10deg);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
 
-        .scale-1 { width: 50px; height: 50px; border-color: #ff5252; color: #ff5252; }
-        .scale-2 { width: 40px; height: 40px; border-color: #ff8a80; color: #ff8a80; }
-        .scale-3 { width: 35px; height: 35px; border-color: #e0e0e0; color: #e0e0e0; }
-        .scale-4 { width: 40px; height: 40px; border-color: #b9f6ca; color: #b9f6ca; }
-        .scale-5 { width: 50px; height: 50px; border-color: #69f0ae; color: #69f0ae; }
+        /* 定義每個表情的顏色邊框 - 改為柔和色系 */
+        .scale-1 { width: 50px; height: 50px; color: #ff8a80; border-color: #ffcdd2; background: #ffebee; }
+        .scale-2 { width: 42px; height: 42px; color: #ffab91; border-color: #ffccbc; background: #fbe9e7; }
+        .scale-3 { width: 38px; height: 38px; color: #bcaaa4; border-color: #d7ccc8; background: #efebe9; }
+        .scale-4 { width: 42px; height: 42px; color: #a5d6a7; border-color: #c8e6c9; background: #e8f5e9; }
+        .scale-5 { width: 50px; height: 50px; color: #66bb6a; border-color: #a5d6a7; background: #c8e6c9; }
 
         .labels {
             display: flex;
             justify-content: space-between;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             color: var(--text-sub);
-            margin-top: 10px;
+            margin-top: 15px;
             padding: 0 10px;
+            font-weight: bold;
         }
 
         /* 結果頁 */
         .result-type {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 800;
-            background: linear-gradient(to right, var(--accent-blue), var(--accent-pink));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--accent-pink-dark);
+            text-shadow: 3px 3px 0px #fff, 5px 5px 0px rgba(0,0,0,0.05);
             margin-bottom: 5px;
+            font-family: 'Fredoka', cursive;
+        }
+        
+        .result-title {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: var(--text-main);
+            margin-bottom: 15px;
         }
         
         .tags {
@@ -263,30 +320,39 @@
             justify-content: center;
             gap: 10px;
             flex-wrap: wrap;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .tag {
-            background: rgba(255,255,255,0.1);
-            padding: 5px 15px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            color: var(--accent-yellow);
-            border: 1px solid var(--accent-yellow);
+            background: var(--accent-yellow);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            color: #795548;
+            border: 2px solid #fff;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+            font-weight: bold;
         }
 
         .desc-box {
-            background: rgba(0,0,0,0.3);
-            padding: 20px;
-            border-radius: 15px;
+            background: #fff;
+            padding: 25px;
+            border-radius: 20px;
             text-align: left;
             margin-bottom: 25px;
-            border-left: 4px solid var(--accent-purple);
+            /* 變成可愛的筆記本風格 */
+            border-left: 6px solid var(--accent-blue);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
         }
 
-        .fade-in { animation: fadeIn 0.5s ease-out; }
+        .desc-box p {
+            margin: 0;
+            color: #5d4037;
+        }
+
+        .fade-in { animation: fadeIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .hidden { display: none; }
@@ -295,31 +361,33 @@
 </head>
 <body>
 
+<!-- ✨ 背景飄浮元素 (增加可愛感) -->
 <div class="floating-bg" id="bg-animation"></div>
 
 <!-- 1. 封面頁 -->
 <div class="container fade-in" id="start-page">
     <div class="img-wrapper">
+        <!-- 這裡是原本的邏輯，會讀取 images/cover.jpg -->
         <img src="" alt="Westie Cover" id="cover-img">
     </div>
-    <h1>🐾NaNa西高地 MBTI 測試</h1>
-    <p>透過行為分析，找出你家西高地的真實性格！</p>
-    <button class="btn-primary" onclick="goToGender()">開始測試</button>
+    <h1>🐾 NaNa西高地 <br>MBTI 人格測試</h1>
+    <p>透過行為分析，找出你家寶貝的隱藏性格！<br>（可愛特別版 ✨）</p>
+    <button class="btn-primary" onclick="goToGender()">開始測試 GO!</button>
 </div>
 
 <!-- 2. 性別選擇頁 -->
 <div class="container hidden" id="gender-page">
-    <h2>🐶 請問你家寶貝是？</h2>
-    <p>性別會影響最終的造型喔！</p>
+    <h2>🐶 請問寶貝是？</h2>
+    <p>選個性別，讓我們幫你搭配造型！</p>
     
     <div class="gender-options">
         <div class="btn-gender" id="btn-boy" onclick="selectGender('boy')">
-            <span class="gender-icon">🎩</span>
-            <span class="gender-text">男寶寶 (Boy)</span>
+            <span class="gender-icon">🧢</span>
+            <span class="gender-text">帥氣底迪</span>
         </div>
         <div class="btn-gender" id="btn-girl" onclick="selectGender('girl')">
-            <span class="gender-icon">🎀</span>
-            <span class="gender-text">女寶寶 (Girl)</span>
+            <span class="gender-icon">👒</span>
+            <span class="gender-text">漂亮美眉</span>
         </div>
     </div>
     
@@ -337,10 +405,10 @@
     </div>
 
     <div class="options-scale">
-        <button class="scale-btn scale-1" onclick="answer(1)">😡</button>
-        <button class="scale-btn scale-2" onclick="answer(2)">😒</button>
+        <button class="scale-btn scale-1" onclick="answer(1)">😤</button>
+        <button class="scale-btn scale-2" onclick="answer(2)">🤔</button>
         <button class="scale-btn scale-3" onclick="answer(3)">😐</button>
-        <button class="scale-btn scale-4" onclick="answer(4)">🙂</button>
+        <button class="scale-btn scale-4" onclick="answer(4)">☺️</button>
         <button class="scale-btn scale-5" onclick="answer(5)">😍</button>
     </div>
     <div class="labels">
@@ -351,8 +419,8 @@
 
 <!-- 4. 結果頁 -->
 <div class="container hidden" id="result-page">
-    <h2>測驗結果</h2>
-    <div class="img-wrapper" id="result-img-container" style="border-color: var(--accent-blue); box-shadow: 0 0 15px var(--accent-blue);">
+    <h2>✨ 測驗結果出爐 ✨</h2>
+    <div class="img-wrapper" id="result-img-container" style="border-color: var(--accent-pink);">
         <img id="result-img" src="" alt="Result Dog">
     </div>
     
@@ -362,15 +430,15 @@
     <div class="tags" id="result-tags"></div>
 
     <div class="desc-box">
-        <p id="result-desc" style="color: #ddd; margin:0;">結果描述...</p>
+        <p id="result-desc" style="font-size: 1rem;">結果描述...</p>
     </div>
 
-    <button class="btn-primary" onclick="restart()">再測一次</button>
+    <button class="btn-primary" onclick="restart()">再玩一次 🔄</button>
 </div>
 
 <script>
     // ==========================================
-    // ⬇️ 圖片連結設定區 (已改為相對路徑) ⬇️
+    // ⬇️ 圖片路徑設定區 (完全保留原設定) ⬇️
     // 請確保 images 資料夾內的圖片檔名與以下完全一致
     // ==========================================
     
@@ -435,7 +503,7 @@
     // ⬆️ 圖片設定結束 ⬆️
     // ==========================================
 
-    // 初始化：設定封面圖
+    // 初始化：設定封面圖 & 啟動背景動畫
     window.onload = function() {
         if (imageUrls["cover"]) {
             document.getElementById('cover-img').src = imageUrls["cover"];
@@ -443,17 +511,23 @@
         createBackground();
     };
 
-    // 背景動畫
+    // ✨ 新增：背景動畫生成 (飄浮小圖案)
     function createBackground() {
         const bg = document.getElementById('bg-animation');
-        const paws = ['🐾', '🦴', '🎾', '🤍'];
+        // 這些是飄浮在背景的裝飾，不會影響你的主要圖片
+        const items = ['🌸', '🦴', '🐾', '💖', '⭐', '🐶']; 
+        const colors = ['#ffb7c5', '#a0e7e5', '#fff59d', '#e0bbe4'];
+        
         for(let i=0; i<15; i++) {
             const el = document.createElement('div');
             el.className = 'paw-bg';
-            el.innerText = paws[Math.floor(Math.random() * paws.length)];
+            el.innerText = items[Math.floor(Math.random() * items.length)];
             el.style.left = Math.random() * 100 + '%';
-            el.style.animationDuration = (10 + Math.random() * 20) + 's';
+            el.style.color = colors[Math.floor(Math.random() * colors.length)];
+            // 隨機動畫速度
+            el.style.animationDuration = (15 + Math.random() * 20) + 's';
             el.style.animationDelay = (Math.random() * 10) + 's';
+            el.style.fontSize = (1.5 + Math.random() * 1.5) + 'rem';
             bg.appendChild(el);
         }
     }
@@ -480,7 +554,7 @@
 
     function confirmGender() {
         if (!selectedGender) {
-            alert("請先選擇狗狗的性別喔！");
+            alert("請先選擇狗狗的性別喔！🐶");
             return;
         }
         document.getElementById('gender-page').classList.add('hidden');
@@ -494,7 +568,7 @@
         loadQuestion();
     }
 
-    // 題目數據 (20題)
+    // 題目數據 (保持不變)
     const questions = [
         { text: "去狗公園時，牠會主動跑去跟每一隻狗打招呼。", dim: 'EI', weight: 1 },
         { text: "家裡有陌生客人來，牠會躲在沙發下或遠處觀察。", dim: 'EI', weight: -1 },
@@ -523,11 +597,11 @@
         document.getElementById('progress-bar').style.width = `${progress}%`;
         
         const qText = document.getElementById('question-text');
-        qText.style.opacity = 0;
+        qText.style.opacity = 0.5;
         setTimeout(() => {
             qText.innerText = `Q${currentQ + 1}. ${questions[currentQ].text}`;
             qText.style.opacity = 1;
-        }, 200);
+        }, 150);
     }
 
     function answer(value) {
@@ -567,13 +641,16 @@
             tagsDiv.appendChild(span);
         });
 
+        // 圖片處理 (使用原邏輯)
         const img = document.getElementById('result-img');
         const key = type + "_" + selectedGender; 
         
+        // 這裡確保讀取的是上面定義的 imageUrls 物件中的本地路徑
         if (imageUrls[key]) {
             img.src = imageUrls[key];
         } else {
-            img.src = `https://via.placeholder.com/600x400/23232e/ff7eb3?text=${type}+${selectedGender}`;
+            // 萬一圖片不見了，給一個佔位符，但基本上會讀到你的圖
+            img.src = `https://via.placeholder.com/600x600/ffb7c5/ffffff?text=${type}+${selectedGender}`;
         }
     }
 
@@ -583,6 +660,7 @@
         selectedGender = null;
         document.getElementById('result-page').classList.add('hidden');
         document.getElementById('start-page').classList.remove('hidden');
+        document.getElementById('progress-bar').style.width = '0%';
         
         if (imageUrls["cover"]) {
             document.getElementById('cover-img').src = imageUrls["cover"];
