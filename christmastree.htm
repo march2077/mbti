@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎄 NaNa Luxury Christmas Tree</title>
     
-    <!-- 錯誤偵測 -->
     <script>
         window.onerror = function(msg, url, line, col, error) {
             if(msg.includes('ResizeObserver')) return;
@@ -22,14 +21,12 @@
 
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #020202; overflow: hidden; }
         
-        /* UI 層 */
         #ui-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 10;
             display: flex; flex-direction: column; justify-content: space-between;
         }
 
-        /* 標題設定 */
         header {
             text-align: center; margin-top: 3vh;
             text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
@@ -50,14 +47,12 @@
             margin-top: 3px; font-style: italic; opacity: 0.8;
         }
 
-        /* 按鈕容器 */
         .controls {
             pointer-events: auto;
             display: flex; justify-content: center; gap: 15px;
             margin-bottom: 6vh; 
         }
 
-        /* 按鈕設定 */
         .btn-luxury {
             background: linear-gradient(135deg, #d4af37 0%, #f9f295 50%, #aa8e28 100%);
             border: 1px solid #fff8e7;
@@ -79,14 +74,12 @@
 
         .material-symbols-rounded { font-size: 1.1rem; }
 
-        /* Loading */
         .loader {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             color: #d4af37; font-family: 'Cinzel', serif; font-size: 1.2rem;
         }
     </style>
 
-    <!-- Import Map -->
     <script type="importmap">
     {
         "imports": {
@@ -148,7 +141,7 @@
             const dummy = useMemo(() => new THREE.Object3D(), []);
 
             const leafData = useMemo(() => new Array(leafCount).fill(0).map((_, i) => ({
-                treePos: treeVector(i, leafCount, 12, 26), // 樹變大
+                treePos: treeVector(i, leafCount, 12, 26), 
                 chaosPos: randomVector(20),
                 current: randomVector(20),
                 scale: Math.random() * 0.25 + 0.1,
@@ -287,27 +280,25 @@
             );
         }
 
-        // --- 核心修改區域：場景配置 ---
+        // --- 核心修正：完美構圖參數 ---
         function Scene({ isFormed, setZoom, zoomedId }) {
             return (
                 <>
                     {/* 
-                       1. 鏡頭位置: [0, 0, 18] -> 距離近，樹會變大
-                       2. FOV: 60 -> 視野廣，更有臨場感
+                       1. 距離 (Z): 28 -> 這是一個安全距離，讓26高的樹能完全進入畫面。
+                       2. 視角 (FOV): 60 -> 廣角一點，會讓樹感覺更巨大雄偉。
                     */}
-                    <PerspectiveCamera makeDefault position={[0, 0, 18]} fov={60} />
+                    <PerspectiveCamera makeDefault position={[0, 0, 28]} fov={60} />
                     
                     {/* 
-                       3. Target: [0, 0, 0] -> 這是最關鍵的修正！
-                          這告訴相機：「看正前方」。
-                          之前的 target Y 是 -4，導致相機低頭看，樹就會往上飄。
-                          現在改為 0，樹會穩穩地在畫面正中央。
+                       3. 視線目標 (Target): [0, 2, 0] -> 稍微往上看一點點，
+                          這樣樹的底部就會在畫面比較下方的位置，不會被切掉。
                     */}
                     <OrbitControls 
                         enablePan={false} 
-                        minDistance={10} 
+                        minDistance={15} 
                         maxDistance={50} 
-                        target={[0, 0, 0]} 
+                        target={[0, 2, 0]} 
                         autoRotate={isFormed && !zoomedId} 
                         autoRotateSpeed={0.8} 
                     />
@@ -318,12 +309,10 @@
                     <Environment preset="lobby" />
 
                     {/* 
-                       4. 樹的位置: Y = -12
-                          因為樹高約 24，從 0 長到 24。
-                          將它下移 12，樹的範圍變成 -12 到 +12。
-                          這樣樹的中心點就是 0，剛好對準相機。
+                       4. 樹的位置 (Y): -10 -> 向上提昇。
+                          這保證了樹的底部不會沉到螢幕外面。
                     */}
-                    <group position={[0, -12, 0]}> 
+                    <group position={[0, -10, 0]}> 
                         <TreeParticles isFormed={isFormed} />
                         <Float speed={1} rotationIntensity={1} floatIntensity={1}>
                             <Sparkles count={150} scale={25} size={5} speed={0.4} opacity={0.6} color="#FFD700" />
@@ -356,16 +345,16 @@
 
         function App() {
             const [mode, setMode] = useState('FORMED');
-            const [zoomedId, setZoom] = useState(null);
+            const [zoomedId, setZoomedId] = useState(null);
 
             const handleToggle = () => {
                 setMode(prev => prev === 'FORMED' ? 'CHAOS' : 'FORMED');
-                setZoom(null);
+                setZoomedId(null);
             };
 
             const handleRandom = () => {
                 const randomId = Math.floor(Math.random() * PHOTO_PATHS.length);
-                setZoom(randomId);
+                setZoomedId(randomId);
             };
             
             return (
@@ -400,7 +389,7 @@
                         <Suspense fallback={<Loader />}>
                             <Scene 
                                 isFormed={mode === 'FORMED'} 
-                                setZoom={setZoom} 
+                                setZoom={setZoomedId} 
                                 zoomedId={zoomedId} 
                             />
                         </Suspense>
@@ -409,7 +398,7 @@
                     {zoomedId !== null && (
                         <div 
                             style={{position:'fixed', top:0, left:0, width:'100%', height:'100%', background:'rgba(0,0,0,0.8)', zIndex:5, cursor:'pointer'}}
-                            onClick={() => setZoom(null)}
+                            onClick={() => setZoomedId(null)}
                         ></div>
                     )}
                 </>
