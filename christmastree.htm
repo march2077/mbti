@@ -29,16 +29,16 @@
             display: flex; flex-direction: column; justify-content: space-between;
         }
 
-        /* 1. 標題修正 (縮小至 60%) */
+        /* 標題設定 (保持您滿意的大小) */
         header {
-            text-align: center; margin-top: 2vh;
+            text-align: center; margin-top: 3vh;
             text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
             pointer-events: none;
         }
         h1 {
             font-family: 'Cinzel', serif; 
             color: #d4af37; 
-            font-size: 2.2rem; /* 原本 3.5rem -> 2.2rem */
+            font-size: 2.2rem; 
             margin: 0; 
             letter-spacing: 0.1em;
             background: linear-gradient(to bottom, #ffd700, #b8860b);
@@ -46,7 +46,7 @@
         }
         p.subtitle {
             font-family: 'Playfair Display', serif; color: #a4c6a4; 
-            font-size: 0.9rem; /* 縮小副標題 */
+            font-size: 0.9rem; 
             margin-top: 3px; font-style: italic; opacity: 0.8;
         }
 
@@ -54,16 +54,16 @@
         .controls {
             pointer-events: auto;
             display: flex; justify-content: center; gap: 15px;
-            margin-bottom: 6vh; /* 稍微往上提一點 */
+            margin-bottom: 6vh; 
         }
 
-        /* 2. 按鈕修正 (縮小至 70%) */
+        /* 按鈕設定 (保持您滿意的大小) */
         .btn-luxury {
             background: linear-gradient(135deg, #d4af37 0%, #f9f295 50%, #aa8e28 100%);
             border: 1px solid #fff8e7;
-            padding: 8px 25px; /* 縮小內距 (原本 12px 30px) */
-            min-width: 130px;  /* 縮小寬度 (原本 160px) */
-            font-size: 0.9rem; /* 縮小字體 (原本 1rem) */
+            padding: 8px 25px; 
+            min-width: 130px;  
+            font-size: 0.9rem; 
             font-family: 'Cinzel', serif; font-weight: bold; color: #2a1a00;
             cursor: pointer; border-radius: 25px;
             box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
@@ -160,7 +160,6 @@
             const dummy = useMemo(() => new THREE.Object3D(), []);
 
             const leafData = useMemo(() => new Array(leafCount).fill(0).map((_, i) => ({
-                // 這裡的高度參數稍微調整，配合放大後的比例
                 treePos: treeVector(i, leafCount, 10, 24),
                 chaosPos: randomVector(18),
                 current: randomVector(18),
@@ -254,11 +253,11 @@
 
                 if (isZoomed) {
                     const cam = state.camera;
-                    // 修正：因為相機變近了，Zoom 的位置也要拉近，不然會穿模
+                    // Zoom 時飛到相機前方
                     const fwd = new THREE.Vector3(0, 0, -5).applyQuaternion(cam.quaternion);
                     targetPos.copy(cam.position).add(fwd);
                     targetRot.copy(cam.quaternion);
-                    targetScale = 3.0; // 稍微縮小放大倍率，適配近距離鏡頭
+                    targetScale = 3.0; 
                 } else {
                     targetPos = isFormed ? treePos : chaosPos;
                     if (isFormed) {
@@ -306,16 +305,19 @@
         function Scene({ isFormed, setZoom, zoomedId }) {
             return (
                 <>
-                    {/* 3. 聖誕樹巨大化修正 */}
-                    {/* Camera Z 從 35 拉近到 16，讓樹看起來變大 4 倍 */}
-                    {/* Group Position 從 -12 調整到 -9，讓樹的重心更集中在畫面中央，而不是縮在上方 */}
-                    <PerspectiveCamera makeDefault position={[0, 1, 16]} fov={55} />
+                    {/* 
+                      修正重點：
+                      1. Position Z: 拉遠到 30 (原本16)，這會讓樹縮小至約 60%
+                      2. Controls Target Y: 設定為 -4，這樣相機就會看向樹的腰部，而不是樹的頂端
+                         這能解決「樹被卡在畫面上面」和「下面被切掉」的問題。
+                    */}
+                    <PerspectiveCamera makeDefault position={[0, 0, 30]} fov={55} />
                     
                     <OrbitControls 
                         enablePan={false} 
-                        minDistance={8} 
-                        maxDistance={30} 
-                        target={[0, 4, 0]} /* 讓旋轉中心在樹的中間偏上，視覺更平衡 */
+                        minDistance={15} 
+                        maxDistance={50} 
+                        target={[0, -4, 0]} /* 關鍵修正：看向樹的中心 */
                         autoRotate={isFormed && !zoomedId} 
                         autoRotateSpeed={0.8} 
                     />
@@ -325,7 +327,8 @@
                     <pointLight position={[-10, 5, 10]} intensity={1} color="#ff4400" />
                     <Environment preset="lobby" />
 
-                    <group position={[0, -9, 0]}> {/* 這裡修正了高度，不再壓得那麼低 */}
+                    {/* 樹的位置設為 -10，配合 target -4，會剛好在畫面中央 */}
+                    <group position={[0, -10, 0]}> 
                         <TreeParticles isFormed={isFormed} />
                         <Float speed={1} rotationIntensity={1} floatIntensity={1}>
                             <Sparkles count={150} scale={25} size={5} speed={0.4} opacity={0.6} color="#FFD700" />
@@ -345,7 +348,8 @@
 
                     <EffectComposer disableNormalPass>
                         <Bloom luminanceThreshold={0.7} mipmapBlur intensity={1.8} radius={0.6} />
-                        <Vignette eskil={false} offset={0.1} darkness={1.1} />
+                        {/* 修正：將 darkness 調淡到 0.9，解決遮罩/裁切感 */}
+                        <Vignette eskil={false} offset={0.1} darkness={0.9} />
                     </EffectComposer>
                 </>
             );
@@ -356,7 +360,7 @@
             return <Html center><div className="loader">{progress.toFixed(0)}%</div></Html>;
         }
 
-        // --- App 主程式 ---
+        // --- App ---
         function App() {
             const [mode, setMode] = useState('FORMED');
             const [zoomedId, setZoom] = useState(null);
