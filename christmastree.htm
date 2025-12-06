@@ -113,7 +113,6 @@
         import { OrbitControls, PerspectiveCamera, Float, Sparkles, Image as DreiImage, Environment, Html, useProgress } from '@react-three/drei';
         import { EffectComposer, Bloom } from '@react-three/postprocessing';
 
-        // --- 設定與資料 ---
         const PHOTO_PATHS = [
             "images/INTJ_boy.jpg", "images/INTJ_girl.jpg", "images/INTP_boy.jpg", "images/INTP_girl.jpg",
             "images/ENTJ_boy.jpg", "images/ENTJ_girl.jpg", "images/ENTP_boy.jpg", "images/ENTP_girl.jpg",
@@ -270,7 +269,6 @@
                 <group ref={group}
                     onClick={(e) => { 
                         e.stopPropagation(); 
-                        // 🔥 邏輯修正：如果是 Chaos 模式，或者這張照片是被選中的(放大狀態)，都允許點擊
                         if(isUnleashed || zoomedId === index) {
                             setZoom(zoomedId === index ? null : index); 
                         }
@@ -301,7 +299,6 @@
             );
         }
 
-        // --- 場景組件 ---
         function Scene({ isFormed, setZoom, zoomedId }) {
             return (
                 <>
@@ -376,7 +373,6 @@
                 <>
                     <div id="ui-layer">
                         <header>
-                            {/* 🔥 修正：已移除狗爪圖示 */}
                             <h1>NANA'S CHRISTMAS</h1>
                             <p className="subtitle">Grand Luxury Interactive Edition</p>
                         </header>
@@ -410,8 +406,6 @@
                             />
                         </Suspense>
                     </Canvas>
-                    
-                    {/* 🔥 修正：徹底移除黑色遮罩 (Overlay)，確保照片明亮 */}
                 </>
             );
         }
