@@ -111,7 +111,7 @@
         import * as THREE from 'three';
         import { Canvas, useFrame, useThree } from '@react-three/fiber';
         import { OrbitControls, PerspectiveCamera, Float, Sparkles, Image as DreiImage, Environment, Html, useProgress } from '@react-three/drei';
-        import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
+        import { EffectComposer, Bloom } from '@react-three/postprocessing'; // 移除 Vignette
 
         // --- 設定與資料 ---
         const PHOTO_PATHS = [
@@ -273,13 +273,13 @@
                     onPointerOut={() => setHover(false)}
                 >
                     {/* 
-                        🔥 關鍵修正 1: 改用 meshBasicMaterial
-                        這會忽略場景燈光，讓白色相紙永遠保持純白 (#f8f8f8)，
-                        不會因為角度背對主光源而變黑。
+                        🔥 關鍵修正: toneMapped={false}
+                        這告訴 Three.js 的渲染器：不要對這個材質進行曝光補償。
+                        無論環境曝光值設定為多少，白就是純白。
                     */}
                     <mesh position={[0,0,-0.02]}>
                         <boxGeometry args={[1.2, 1.5, 0.05]} />
-                        <meshBasicMaterial color="#f8f8f8" />
+                        <meshBasicMaterial color="#ffffff" toneMapped={false} />
                     </mesh>
                     
                     <Suspense fallback={<mesh><planeGeometry /><meshBasicMaterial color="#333"/></mesh>}>
@@ -292,10 +292,9 @@
                         />
                     </Suspense>
                     
-                    {/* 底部簽名區也改用 BasicMaterial */}
                     <mesh position={[0,-0.6,0.02]}>
                         <planeGeometry args={[0.9, 0.2]} />
-                        <meshBasicMaterial color="#f8f8f8" />
+                        <meshBasicMaterial color="#ffffff" toneMapped={false} />
                     </mesh>
                 </group>
             );
@@ -305,21 +304,13 @@
         function Scene({ isFormed, setZoom, zoomedId }) {
             return (
                 <>
-                    {/* 
-                        🔥 關鍵修正 2: 相機頭燈
-                        將 pointLight 放在 PerspectiveCamera 內部，
-                        這盞燈會隨著相機移動，就像相機上的閃光燈或頭燈。
-                        decay={0} 代表光線不隨距離衰減，確保照片在眼前時一定夠亮。
-                    */}
                     <PerspectiveCamera 
                         makeDefault 
                         position={[0, 0, 73]} 
                         fov={60} 
                         near={0.1} 
                         far={500} 
-                    >
-                        <pointLight intensity={1.2} position={[0, 0, 0]} decay={0} distance={100} color="#ffffff" />
-                    </PerspectiveCamera>
+                    />
                     
                     <OrbitControls 
                         enablePan={false} 
@@ -331,8 +322,6 @@
                     />
 
                     <ambientLight intensity={0.4} color="#fff0d0" />
-                    
-                    {/* 聖誕樹的主燈 */}
                     <pointLight position={[10, 20, 10]} intensity={2} color="#FFD700" />
                     <pointLight position={[-10, 5, 10]} intensity={1} color="#ff4400" />
                     
@@ -356,9 +345,9 @@
                         ))}
                     </group>
 
+                    {/* 🔥 移除 Vignette，只保留 Bloom 輝光效果 */}
                     <EffectComposer disableNormalPass>
                         <Bloom luminanceThreshold={0.7} mipmapBlur intensity={1.8} radius={0.6} />
-                        <Vignette eskil={false} offset={0.1} darkness={0.8} />
                     </EffectComposer>
                 </>
             );
