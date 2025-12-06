@@ -270,7 +270,7 @@
                 <group ref={group}
                     onClick={(e) => { 
                         e.stopPropagation(); 
-                        // 🔥 關鍵修正: 允許點擊的條件改為「Chaos模式」或「目前是放大的那張照片」
+                        // 🔥 邏輯修正：如果是 Chaos 模式，或者這張照片是被選中的(放大狀態)，都允許點擊
                         if(isUnleashed || zoomedId === index) {
                             setZoom(zoomedId === index ? null : index); 
                         }
@@ -376,7 +376,7 @@
                 <>
                     <div id="ui-layer">
                         <header>
-                            {/* 🔥 修正: 移除了狗爪 icon */}
+                            {/* 🔥 修正：已移除狗爪圖示 */}
                             <h1>NANA'S CHRISTMAS</h1>
                             <p className="subtitle">Grand Luxury Interactive Edition</p>
                         </header>
@@ -411,12 +411,7 @@
                         </Suspense>
                     </Canvas>
                     
-                    {zoomedId !== null && (
-                        <div 
-                            style={{position:'fixed', top:0, left:0, width:'100%', height:'100%', background:'rgba(0,0,0,0.8)', zIndex:5, cursor:'pointer'}}
-                            onClick={() => setZoomedId(null)}
-                        ></div>
-                    )}
+                    {/* 🔥 修正：徹底移除黑色遮罩 (Overlay)，確保照片明亮 */}
                 </>
             );
         }
