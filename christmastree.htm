@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎄 NaNa Luxury Christmas Tree</title>
+    <title>🎄 NaNa Luxury Christmas Tree (Debug Mode)</title>
     
     <script>
         window.onerror = function(msg, url, line, col, error) {
@@ -21,12 +21,6 @@
 
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #020202; overflow: hidden; }
         
-        #root {
-            width: 100vw; height: 100vh;
-            position: fixed; top: 0; left: 0;
-            overflow: hidden;
-        }
-
         #ui-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 10;
@@ -41,7 +35,7 @@
         h1 {
             font-family: 'Cinzel', serif; 
             color: #d4af37; 
-            font-size: 2.5rem; 
+            font-size: 2.2rem; 
             margin: 0; 
             letter-spacing: 0.1em;
             background: linear-gradient(to bottom, #ffd700, #b8860b);
@@ -49,40 +43,57 @@
         }
         p.subtitle {
             font-family: 'Playfair Display', serif; color: #a4c6a4; 
-            font-size: 1rem; 
-            margin-top: 5px; font-style: italic; opacity: 0.8;
+            font-size: 0.9rem; 
+            margin-top: 3px; font-style: italic; opacity: 0.8;
         }
 
         .controls {
             pointer-events: auto;
-            display: flex; justify-content: center; gap: 20px;
+            display: flex; justify-content: center; gap: 15px;
             margin-bottom: 6vh; 
         }
 
         .btn-luxury {
             background: linear-gradient(135deg, #d4af37 0%, #f9f295 50%, #aa8e28 100%);
             border: 1px solid #fff8e7;
-            padding: 10px 30px; 
-            min-width: 150px;  
-            font-size: 1rem; 
+            padding: 8px 25px; 
+            min-width: 130px;  
+            font-size: 0.9rem; 
             font-family: 'Cinzel', serif; font-weight: bold; color: #2a1a00;
-            cursor: pointer; border-radius: 30px;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+            cursor: pointer; border-radius: 25px;
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
         }
         .btn-luxury:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.6);
             background: linear-gradient(135deg, #fff 0%, #ffd700 100%);
         }
         .btn-luxury:active { transform: translateY(0); }
 
-        .material-symbols-rounded { font-size: 1.2rem; }
+        .material-symbols-rounded { font-size: 1.1rem; }
 
         .loader {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             color: #d4af37; font-family: 'Cinzel', serif; font-size: 1.2rem;
+        }
+
+        .debug-panel {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #d4af37;
+            border-radius: 10px;
+            padding: 15px;
+            z-index: 1000;
+            color: #d4af37;
+            font-family: monospace;
+            width: 280px;
+            pointer-events: auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
     </style>
 
@@ -102,6 +113,7 @@
     </script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
+
 <body>
     <div id="root"></div>
 
@@ -111,9 +123,8 @@
         import * as THREE from 'three';
         import { Canvas, useFrame, useThree } from '@react-three/fiber';
         import { OrbitControls, PerspectiveCamera, Float, Sparkles, Image as DreiImage, Environment, Html, useProgress } from '@react-three/drei';
-        import { EffectComposer, Bloom } from '@react-three/postprocessing'; // 移除 Vignette
+        import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 
-        // --- 設定與資料 ---
         const PHOTO_PATHS = [
             "images/INTJ_boy.jpg", "images/INTJ_girl.jpg", "images/INTP_boy.jpg", "images/INTP_girl.jpg",
             "images/ENTJ_boy.jpg", "images/ENTJ_girl.jpg", "images/ENTP_boy.jpg", "images/ENTP_girl.jpg",
@@ -172,26 +183,26 @@
 
             useFrame((state) => {
                 const t = state.clock.elapsedTime;
+
                 if(leavesRef.current) {
                     leafData.forEach((d, i) => {
                         const target = isFormed ? d.treePos : d.chaosPos;
                         d.current.lerp(target, d.speed);
                         dummy.position.copy(d.current);
                         if(isFormed) dummy.position.y += Math.sin(t + i*0.1) * 0.02;
-                        else dummy.rotation.x += 0.01;
                         dummy.scale.setScalar(d.scale);
                         dummy.updateMatrix();
                         leavesRef.current.setMatrixAt(i, dummy.matrix);
                     });
                     leavesRef.current.instanceMatrix.needsUpdate = true;
                 }
+
                 if(decorRef.current) {
                     decorData.forEach((d, i) => {
                         const target = isFormed ? d.treePos : d.chaosPos;
                         d.current.lerp(target, d.speed * 0.8);
                         dummy.position.copy(d.current);
                         if(isFormed) dummy.position.y += Math.cos(t + i*0.2) * 0.03;
-                        else { dummy.rotation.y += 0.02; dummy.rotation.z += 0.01; }
                         dummy.scale.setScalar(d.scale);
                         dummy.updateMatrix();
                         decorRef.current.setMatrixAt(i, dummy.matrix);
@@ -272,51 +283,31 @@
                     onPointerOver={() => isUnleashed && setHover(true)}
                     onPointerOut={() => setHover(false)}
                 >
-                    {/* 
-                        🔥 關鍵修正: toneMapped={false}
-                        這告訴 Three.js 的渲染器：不要對這個材質進行曝光補償。
-                        無論環境曝光值設定為多少，白就是純白。
-                    */}
                     <mesh position={[0,0,-0.02]}>
                         <boxGeometry args={[1.2, 1.5, 0.05]} />
-                        <meshBasicMaterial color="#ffffff" toneMapped={false} />
+                        <meshStandardMaterial color="#f8f8f8" roughness={0.5} />
                     </mesh>
-                    
                     <Suspense fallback={<mesh><planeGeometry /><meshBasicMaterial color="#333"/></mesh>}>
-                        <DreiImage 
-                            url={url} 
-                            position={[0, 0.15, 0.02]} 
-                            scale={[1, 1, 1]} 
-                            transparent 
-                            toneMapped={false} 
-                        />
+                        <DreiImage url={url} position={[0, 0.15, 0.02]} scale={[1, 1, 1]} transparent />
                     </Suspense>
-                    
                     <mesh position={[0,-0.6,0.02]}>
                         <planeGeometry args={[0.9, 0.2]} />
-                        <meshBasicMaterial color="#ffffff" toneMapped={false} />
+                        <meshBasicMaterial color="#f8f8f8" />
                     </mesh>
                 </group>
             );
         }
 
-        // --- 場景組件 ---
-        function Scene({ isFormed, setZoom, zoomedId }) {
+        function Scene({ isFormed, setZoom, zoomedId, debug }) {
             return (
                 <>
-                    <PerspectiveCamera 
-                        makeDefault 
-                        position={[0, 0, 73]} 
-                        fov={60} 
-                        near={0.1} 
-                        far={500} 
-                    />
+                    <PerspectiveCamera makeDefault position={[0, 0, debug.camZ]} fov={60} />
                     
                     <OrbitControls 
                         enablePan={false} 
-                        minDistance={20} 
-                        maxDistance={150} 
-                        target={[0, 10, 0]} 
+                        minDistance={10} 
+                        maxDistance={100} 
+                        target={[0, debug.targetY, 0]} 
                         autoRotate={isFormed && !zoomedId} 
                         autoRotateSpeed={0.8} 
                     />
@@ -324,10 +315,9 @@
                     <ambientLight intensity={0.4} color="#fff0d0" />
                     <pointLight position={[10, 20, 10]} intensity={2} color="#FFD700" />
                     <pointLight position={[-10, 5, 10]} intensity={1} color="#ff4400" />
-                    
                     <Environment preset="lobby" />
 
-                    <group position={[0, 0, 0]}> 
+                    <group position={[0, debug.treeY, 0]}> 
                         <TreeParticles isFormed={isFormed} />
                         <Float speed={1} rotationIntensity={1} floatIntensity={1}>
                             <Sparkles count={150} scale={25} size={5} speed={0.4} opacity={0.6} color="#FFD700" />
@@ -345,9 +335,9 @@
                         ))}
                     </group>
 
-                    {/* 🔥 移除 Vignette，只保留 Bloom 輝光效果 */}
                     <EffectComposer disableNormalPass>
                         <Bloom luminanceThreshold={0.7} mipmapBlur intensity={1.8} radius={0.6} />
+                        <Vignette eskil={false} offset={0.1} darkness={0.9} />
                     </EffectComposer>
                 </>
             );
@@ -358,9 +348,32 @@
             return <Html center><div className="loader">{progress.toFixed(0)}%</div></Html>;
         }
 
+        const DebugControl = ({ label, value, set, min, max, step }) => (
+            <div className="debug-row">
+                <div className="debug-label">
+                    <span>{label}</span>
+                    <span>{value.toFixed(1)}</span>
+                </div>
+                <div className="debug-controls">
+                    <button className="debug-btn" onClick={() => set(prev => Math.max(min, Number((prev - step).toFixed(1))))}>-</button>
+                    <input 
+                        type="range" className="debug-slider" 
+                        min={min} max={max} step={step} 
+                        value={value} onChange={e => set(Number(e.target.value))} 
+                    />
+                    <button className="debug-btn" onClick={() => set(prev => Math.min(max, Number((prev + step).toFixed(1))))}>+</button>
+                </div>
+            </div>
+        );
+
         function App() {
             const [mode, setMode] = useState('FORMED');
             const [zoomedId, setZoomedId] = useState(null);
+
+            const [camZ, setCamZ] = useState(28);
+            const [targetY, setTargetY] = useState(0);
+            const [treeY, setTreeY] = useState(-10);
+            const [showDebug, setShowDebug] = useState(true);
 
             const handleToggle = () => {
                 setMode(prev => prev === 'FORMED' ? 'CHAOS' : 'FORMED');
@@ -374,9 +387,31 @@
             
             return (
                 <>
+                    {showDebug && (
+                        <div className="debug-panel">
+                            <button className="toggle-debug" onClick={() => setShowDebug(false)}>Hide Debug</button>
+                            <h3 style={{marginTop:0, borderBottom:'1px solid #555', paddingBottom:5}}>調整參數</h3>
+                            
+                            <DebugControl label="Camera Dist (Z)" value={camZ} set={setCamZ} min={10} max={100} step={1} />
+                            <DebugControl label="Look At (Target Y)" value={targetY} set={setTargetY} min={-20} max={20} step={1} />
+                            <DebugControl label="Tree Position (Y)" value={treeY} set={setTreeY} min={-30} max={10} step={1} />
+                            
+                            <div style={{fontSize:12, color:'#888', marginTop:10}}>
+                                調整好後請記下數值。<br/>按上方 "Hide Debug" 隱藏面板。
+                            </div>
+                        </div>
+                    )}
+
+                    {!showDebug && (
+                        <button 
+                            style={{position:'fixed', left:20, top:20, zIndex:1001, background:'#333', color:'#fff', border:'none', padding:'5px 10px', cursor:'pointer'}} 
+                            onClick={() => setShowDebug(true)}
+                        >Show Debug</button>
+                    )}
+
                     <div id="ui-layer">
                         <header>
-                            <h1><span style={{fontSize:'2.5rem', verticalAlign:'middle'}}>🐾</span> NANA'S CHRISTMAS</h1>
+                            <h1><span style={{fontSize:'2rem', verticalAlign:'middle'}}>🐾</span> NANA'S CHRISTMAS</h1>
                             <p className="subtitle">Grand Luxury Interactive Edition</p>
                         </header>
                         
@@ -406,16 +441,18 @@
                                 isFormed={mode === 'FORMED'} 
                                 setZoom={setZoomedId} 
                                 zoomedId={zoomedId}
+                                debug={{ camZ, targetY, treeY }}
                             />
                         </Suspense>
                     </Canvas>
-                    
-                    {zoomedId !== null && (
-                        <div 
-                            style={{position:'fixed', top:0, left:0, width:'100%', height:'100%', background:'rgba(0,0,0,0.8)', zIndex:5, cursor:'pointer'}}
-                            onClick={() => setZoomedId(null)}
-                        ></div>
-                    )}
+
+                    {/** 
+                      ----------------------------------------------
+                      REMOVED DARK MASK OVERLAY
+                      原本會造成整個畫面變暗的遮罩已刪除
+                      ----------------------------------------------
+                    **/}
+
                 </>
             );
         }
