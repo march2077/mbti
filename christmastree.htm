@@ -111,7 +111,7 @@
         import * as THREE from 'three';
         import { Canvas, useFrame, useThree } from '@react-three/fiber';
         import { OrbitControls, PerspectiveCamera, Float, Sparkles, Image as DreiImage, Environment, Html, useProgress } from '@react-three/drei';
-        import { EffectComposer, Bloom } from '@react-three/postprocessing'; // 移除 Vignette
+        import { EffectComposer, Bloom } from '@react-three/postprocessing';
 
         // --- 設定與資料 ---
         const PHOTO_PATHS = [
@@ -268,15 +268,16 @@
 
             return (
                 <group ref={group}
-                    onClick={(e) => { e.stopPropagation(); if(isUnleashed) setZoom(zoomedId === index ? null : index); }}
+                    onClick={(e) => { 
+                        e.stopPropagation(); 
+                        // 🔥 關鍵修正: 允許點擊的條件改為「Chaos模式」或「目前是放大的那張照片」
+                        if(isUnleashed || zoomedId === index) {
+                            setZoom(zoomedId === index ? null : index); 
+                        }
+                    }}
                     onPointerOver={() => isUnleashed && setHover(true)}
                     onPointerOut={() => setHover(false)}
                 >
-                    {/* 
-                        🔥 關鍵修正: toneMapped={false}
-                        這告訴 Three.js 的渲染器：不要對這個材質進行曝光補償。
-                        無論環境曝光值設定為多少，白就是純白。
-                    */}
                     <mesh position={[0,0,-0.02]}>
                         <boxGeometry args={[1.2, 1.5, 0.05]} />
                         <meshBasicMaterial color="#ffffff" toneMapped={false} />
@@ -345,7 +346,6 @@
                         ))}
                     </group>
 
-                    {/* 🔥 移除 Vignette，只保留 Bloom 輝光效果 */}
                     <EffectComposer disableNormalPass>
                         <Bloom luminanceThreshold={0.7} mipmapBlur intensity={1.8} radius={0.6} />
                     </EffectComposer>
@@ -376,7 +376,8 @@
                 <>
                     <div id="ui-layer">
                         <header>
-                            <h1><span style={{fontSize:'2.5rem', verticalAlign:'middle'}}>🐾</span> NANA'S CHRISTMAS</h1>
+                            {/* 🔥 修正: 移除了狗爪 icon */}
+                            <h1>NANA'S CHRISTMAS</h1>
                             <p className="subtitle">Grand Luxury Interactive Edition</p>
                         </header>
                         
@@ -410,12 +411,12 @@
                         </Suspense>
                     </Canvas>
                     
-                    {/** 
-                      ----------------------------------------------
-                      REMOVED DARK MASK OVERLAY
-                      原本會造成整個畫面變暗的遮罩已刪除
-                      ----------------------------------------------
-                    **/}
+                    {zoomedId !== null && (
+                        <div 
+                            style={{position:'fixed', top:0, left:0, width:'100%', height:'100%', background:'rgba(0,0,0,0.8)', zIndex:5, cursor:'pointer'}}
+                            onClick={() => setZoomedId(null)}
+                        ></div>
+                    )}
                 </>
             );
         }
