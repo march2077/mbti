@@ -29,54 +29,60 @@
             display: flex; flex-direction: column; justify-content: space-between;
         }
 
-        /* 標題 */
+        /* 1. 標題修正 (縮小至 60%) */
         header {
-            text-align: center; margin-top: 3vh;
-            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            text-align: center; margin-top: 2vh;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
             pointer-events: none;
         }
         h1 {
-            font-family: 'Cinzel', serif; color: #d4af37; font-size: 3.5rem; margin: 0; letter-spacing: 0.1em;
+            font-family: 'Cinzel', serif; 
+            color: #d4af37; 
+            font-size: 2.2rem; /* 原本 3.5rem -> 2.2rem */
+            margin: 0; 
+            letter-spacing: 0.1em;
             background: linear-gradient(to bottom, #ffd700, #b8860b);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
         p.subtitle {
-            font-family: 'Playfair Display', serif; color: #a4c6a4; font-size: 1.2rem; margin-top: 5px; font-style: italic;
+            font-family: 'Playfair Display', serif; color: #a4c6a4; 
+            font-size: 0.9rem; /* 縮小副標題 */
+            margin-top: 3px; font-style: italic; opacity: 0.8;
         }
 
         /* 按鈕容器 */
         .controls {
             pointer-events: auto;
-            display: flex; justify-content: center; gap: 20px; /* 按鈕間距 */
-            margin-bottom: 5vh;
+            display: flex; justify-content: center; gap: 15px;
+            margin-bottom: 6vh; /* 稍微往上提一點 */
         }
 
-        /* 小型奢華按鈕樣式 */
+        /* 2. 按鈕修正 (縮小至 70%) */
         .btn-luxury {
             background: linear-gradient(135deg, #d4af37 0%, #f9f295 50%, #aa8e28 100%);
             border: 1px solid #fff8e7;
-            padding: 12px 30px; /* 縮小內距 */
-            min-width: 160px;
-            font-size: 1rem; /* 縮小字體 */
+            padding: 8px 25px; /* 縮小內距 (原本 12px 30px) */
+            min-width: 130px;  /* 縮小寬度 (原本 160px) */
+            font-size: 0.9rem; /* 縮小字體 (原本 1rem) */
             font-family: 'Cinzel', serif; font-weight: bold; color: #2a1a00;
-            cursor: pointer; border-radius: 30px;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+            cursor: pointer; border-radius: 25px;
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
         }
         .btn-luxury:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.6);
             background: linear-gradient(135deg, #fff 0%, #ffd700 100%);
         }
         .btn-luxury:active { transform: translateY(0); }
 
-        .material-symbols-rounded { font-size: 1.2rem; }
+        .material-symbols-rounded { font-size: 1.1rem; }
 
         /* Loading */
         .loader {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            color: #d4af37; font-family: 'Cinzel', serif; font-size: 1.5rem;
+            color: #d4af37; font-family: 'Cinzel', serif; font-size: 1.2rem;
         }
     </style>
 
@@ -104,7 +110,7 @@
         import React, { useState, useRef, useMemo, Suspense } from 'react';
         import { createRoot } from 'react-dom/client';
         import * as THREE from 'three';
-        import { Canvas, useFrame } from '@react-three/fiber';
+        import { Canvas, useFrame, useThree } from '@react-three/fiber';
         import { OrbitControls, PerspectiveCamera, Float, Sparkles, Image as DreiImage, Environment, Html, useProgress } from '@react-three/drei';
         import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 
@@ -154,9 +160,10 @@
             const dummy = useMemo(() => new THREE.Object3D(), []);
 
             const leafData = useMemo(() => new Array(leafCount).fill(0).map((_, i) => ({
-                treePos: treeVector(i, leafCount, 9, 22),
-                chaosPos: randomVector(15),
-                current: randomVector(15),
+                // 這裡的高度參數稍微調整，配合放大後的比例
+                treePos: treeVector(i, leafCount, 10, 24),
+                chaosPos: randomVector(18),
+                current: randomVector(18),
                 scale: Math.random() * 0.25 + 0.1,
                 speed: Math.random() * 0.02 + 0.04
             })), []);
@@ -164,12 +171,12 @@
             const decorData = useMemo(() => new Array(decorCount).fill(0).map((_, i) => {
                 const colorKeys = Object.keys(COLORS).filter(k => k !== 'EMERALD');
                 const randColor = COLORS[colorKeys[Math.floor(Math.random() * colorKeys.length)]];
-                const vec = treeVector(i, decorCount, 9.5, 21);
+                const vec = treeVector(i, decorCount, 10.5, 23);
                 vec.x += (Math.random()-0.5); vec.z += (Math.random()-0.5);
                 return {
                     treePos: vec,
-                    chaosPos: randomVector(20),
-                    current: randomVector(20),
+                    chaosPos: randomVector(24),
+                    current: randomVector(24),
                     scale: Math.random() * 0.4 + 0.3,
                     color: new THREE.Color(randColor),
                     speed: Math.random() * 0.02 + 0.03
@@ -228,11 +235,11 @@
             const [hovered, setHover] = useState(false);
             
             const { treePos, chaosPos, randomRot } = useMemo(() => {
-                const t = treeVector(index, 32, 10.5, 20); 
+                const t = treeVector(index, 32, 11, 22); 
                 t.y += 1; 
                 return {
                     treePos: t,
-                    chaosPos: randomVector(25),
+                    chaosPos: randomVector(28),
                     randomRot: [Math.random()*Math.PI, Math.random()*Math.PI, 0]
                 };
             }, [index]);
@@ -246,12 +253,12 @@
                 let targetScale = 1;
 
                 if (isZoomed) {
-                    // Zoom: 飛到相機正前方
                     const cam = state.camera;
-                    const fwd = new THREE.Vector3(0, 0, -8).applyQuaternion(cam.quaternion);
+                    // 修正：因為相機變近了，Zoom 的位置也要拉近，不然會穿模
+                    const fwd = new THREE.Vector3(0, 0, -5).applyQuaternion(cam.quaternion);
                     targetPos.copy(cam.position).add(fwd);
                     targetRot.copy(cam.quaternion);
-                    targetScale = 3.5;
+                    targetScale = 3.0; // 稍微縮小放大倍率，適配近距離鏡頭
                 } else {
                     targetPos = isFormed ? treePos : chaosPos;
                     if (isFormed) {
@@ -299,11 +306,16 @@
         function Scene({ isFormed, setZoom, zoomedId }) {
             return (
                 <>
-                    <PerspectiveCamera makeDefault position={[0, 2, 35]} fov={50} />
+                    {/* 3. 聖誕樹巨大化修正 */}
+                    {/* Camera Z 從 35 拉近到 16，讓樹看起來變大 4 倍 */}
+                    {/* Group Position 從 -12 調整到 -9，讓樹的重心更集中在畫面中央，而不是縮在上方 */}
+                    <PerspectiveCamera makeDefault position={[0, 1, 16]} fov={55} />
+                    
                     <OrbitControls 
                         enablePan={false} 
-                        minDistance={10} 
-                        maxDistance={50} 
+                        minDistance={8} 
+                        maxDistance={30} 
+                        target={[0, 4, 0]} /* 讓旋轉中心在樹的中間偏上，視覺更平衡 */
                         autoRotate={isFormed && !zoomedId} 
                         autoRotateSpeed={0.8} 
                     />
@@ -313,7 +325,7 @@
                     <pointLight position={[-10, 5, 10]} intensity={1} color="#ff4400" />
                     <Environment preset="lobby" />
 
-                    <group position={[0, -12, 0]}>
+                    <group position={[0, -9, 0]}> {/* 這裡修正了高度，不再壓得那麼低 */}
                         <TreeParticles isFormed={isFormed} />
                         <Float speed={1} rotationIntensity={1} floatIntensity={1}>
                             <Sparkles count={150} scale={25} size={5} speed={0.4} opacity={0.6} color="#FFD700" />
@@ -323,7 +335,7 @@
                                 key={i} 
                                 index={i} 
                                 url={path} 
-                                isFormed={isFormed}
+                                isFormed={isFormed} 
                                 isUnleashed={!isFormed}
                                 setZoom={setZoom}
                                 zoomedId={zoomedId}
@@ -349,13 +361,11 @@
             const [mode, setMode] = useState('FORMED');
             const [zoomedId, setZoom] = useState(null);
 
-            // 按鈕 1: 切換模式
             const handleToggle = () => {
                 setMode(prev => prev === 'FORMED' ? 'CHAOS' : 'FORMED');
                 setZoom(null);
             };
 
-            // 按鈕 2: 隨機抽照片 (Lucky Draw)
             const handleRandom = () => {
                 const randomId = Math.floor(Math.random() * PHOTO_PATHS.length);
                 setZoom(randomId);
@@ -365,13 +375,11 @@
                 <>
                     <div id="ui-layer">
                         <header>
-                            <h1><span style={{fontSize:'2.5rem', verticalAlign:'middle'}}>🐾</span> NANA'S CHRISTMAS</h1>
+                            <h1><span style={{fontSize:'2rem', verticalAlign:'middle'}}>🐾</span> NANA'S CHRISTMAS</h1>
                             <p className="subtitle">Grand Luxury Interactive Edition</p>
                         </header>
                         
-                        {/* 雙按鈕控制區 */}
                         <div className="controls">
-                            {/* 按鈕 1 */}
                             <button className="btn-luxury" onClick={handleToggle}>
                                 <span className="material-symbols-rounded">
                                     {mode === 'FORMED' ? 'filter_drama' : 'park'}
@@ -379,14 +387,13 @@
                                 {mode === 'FORMED' ? "Unleash" : "Form Tree"}
                             </button>
 
-                            {/* 按鈕 2 */}
                             <button className="btn-luxury" onClick={handleRandom}>
                                 <span className="material-symbols-rounded">shuffle</span>
                                 Lucky Pick
                             </button>
                         </div>
                         
-                         <div style={{position:'absolute', bottom:'10px', right:'20px', color:'#d4af37', opacity:0.6, fontSize:'0.9rem'}}>
+                        <div style={{position:'absolute', bottom:'10px', right:'20px', color:'#d4af37', opacity:0.6, fontSize:'0.8rem'}}>
                             {mode === 'FORMED' ? "Drag to Rotate" : "Click Photos to Zoom"}
                         </div>
                     </div>
@@ -402,7 +409,6 @@
                         </Suspense>
                     </Canvas>
                     
-                    {/* 點擊背景取消放大 */}
                     {zoomedId !== null && (
                         <div 
                             style={{position:'fixed', top:0, left:0, width:'100%', height:'100%', background:'rgba(0,0,0,0.8)', zIndex:5, cursor:'pointer'}}
