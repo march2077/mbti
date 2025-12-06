@@ -21,7 +21,6 @@
 
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #020202; overflow: hidden; }
         
-        /* 強制 React 根容器填滿視窗 */
         #root {
             width: 100vw; height: 100vh;
             position: fixed; top: 0; left: 0;
@@ -34,7 +33,6 @@
             display: flex; flex-direction: column; justify-content: space-between;
         }
 
-        /* 標題 */
         header {
             text-align: center; margin-top: 3vh;
             text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
@@ -43,7 +41,7 @@
         h1 {
             font-family: 'Cinzel', serif; 
             color: #d4af37; 
-            font-size: 2.5rem; /* 稍微加大一點標題 */
+            font-size: 2.5rem; 
             margin: 0; 
             letter-spacing: 0.1em;
             background: linear-gradient(to bottom, #ffd700, #b8860b);
@@ -129,7 +127,6 @@
 
         const COLORS = { EMERALD: "#046307", GOLD: "#FFD700", RED: "#8B0000", SILVER: "#C0C0C0" };
 
-        // --- 核心演算法 ---
         const randomVector = (r) => {
             const theta = 2 * Math.PI * Math.random();
             const phi = Math.acos(2 * Math.random() - 1);
@@ -143,7 +140,6 @@
             return new THREE.Vector3(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
         };
 
-        // --- 3D 元件 ---
         function TreeParticles({ isFormed }) {
             const leafCount = 2500;
             const decorCount = 300;
@@ -244,7 +240,6 @@
 
                 if (isZoomed) {
                     const cam = state.camera;
-                    // 將照片移動到相機前方不遠處
                     const fwd = new THREE.Vector3(0, 0, -5).applyQuaternion(cam.quaternion);
                     targetPos.copy(cam.position).add(fwd);
                     targetRot.copy(cam.quaternion);
@@ -277,13 +272,16 @@
                     onPointerOver={() => isUnleashed && setHover(true)}
                     onPointerOut={() => setHover(false)}
                 >
-                    {/* 白框 */}
+                    {/* 
+                        🔥 關鍵修正 1: 改用 meshBasicMaterial
+                        這會忽略場景燈光，讓白色相紙永遠保持純白 (#f8f8f8)，
+                        不會因為角度背對主光源而變黑。
+                    */}
                     <mesh position={[0,0,-0.02]}>
                         <boxGeometry args={[1.2, 1.5, 0.05]} />
-                        <meshStandardMaterial color="#f8f8f8" roughness={0.5} />
+                        <meshBasicMaterial color="#f8f8f8" />
                     </mesh>
                     
-                    {/* 照片：toneMapped={false} 確保照片不被環境光和後期特效變暗，還原原本色彩 */}
                     <Suspense fallback={<mesh><planeGeometry /><meshBasicMaterial color="#333"/></mesh>}>
                         <DreiImage 
                             url={url} 
@@ -294,7 +292,7 @@
                         />
                     </Suspense>
                     
-                    {/* 底部簽名區 */}
+                    {/* 底部簽名區也改用 BasicMaterial */}
                     <mesh position={[0,-0.6,0.02]}>
                         <planeGeometry args={[0.9, 0.2]} />
                         <meshBasicMaterial color="#f8f8f8" />
@@ -305,20 +303,23 @@
 
         // --- 場景組件 ---
         function Scene({ isFormed, setZoom, zoomedId }) {
-            // --- 🔒 鎖定參數 🔒 ---
-            // Camera Z = 73
-            // Target Y = 10
-            // Tree Y = 0 (不需要位移)
-            
             return (
                 <>
+                    {/* 
+                        🔥 關鍵修正 2: 相機頭燈
+                        將 pointLight 放在 PerspectiveCamera 內部，
+                        這盞燈會隨著相機移動，就像相機上的閃光燈或頭燈。
+                        decay={0} 代表光線不隨距離衰減，確保照片在眼前時一定夠亮。
+                    */}
                     <PerspectiveCamera 
                         makeDefault 
                         position={[0, 0, 73]} 
                         fov={60} 
                         near={0.1} 
                         far={500} 
-                    />
+                    >
+                        <pointLight intensity={1.2} position={[0, 0, 0]} decay={0} distance={100} color="#ffffff" />
+                    </PerspectiveCamera>
                     
                     <OrbitControls 
                         enablePan={false} 
@@ -331,16 +332,12 @@
 
                     <ambientLight intensity={0.4} color="#fff0d0" />
                     
-                    {/* 原有燈光，照亮樹體 */}
+                    {/* 聖誕樹的主燈 */}
                     <pointLight position={[10, 20, 10]} intensity={2} color="#FFD700" />
                     <pointLight position={[-10, 5, 10]} intensity={1} color="#ff4400" />
                     
-                    {/* 🔦 補光燈：放在相機附近 (Z=70)，確保被抽取的照片正面是亮的 */}
-                    <pointLight position={[0, 10, 70]} intensity={1.0} color="#ffffff" distance={50} decay={2} />
-
                     <Environment preset="lobby" />
 
-                    {/* Tree Y 設為 0 */}
                     <group position={[0, 0, 0]}> 
                         <TreeParticles isFormed={isFormed} />
                         <Float speed={1} rotationIntensity={1} floatIntensity={1}>
