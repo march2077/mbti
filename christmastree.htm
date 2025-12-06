@@ -21,6 +21,16 @@
 
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #020202; overflow: hidden; }
         
+        /* 🔥 關鍵修正：強制 React 的根容器填滿視窗 🔥 */
+        #root {
+            width: 100vw;
+            height: 100vh;
+            position: fixed; /* 確保它固定在視窗，不隨內容流動 */
+            top: 0;
+            left: 0;
+            overflow: hidden;
+        }
+
         #ui-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 10;
@@ -28,7 +38,6 @@
             transition: opacity 0.3s ease;
         }
         
-        /* 用於 Debug 隱藏 UI */
         .ui-hidden { opacity: 0.1; }
 
         /* 標題 */
