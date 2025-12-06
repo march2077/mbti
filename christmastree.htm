@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎄 NaNa Luxury Christmas Tree</title>
+    <title>🎄 NaNa Luxury Christmas Tree (Debug Mode)</title>
     
     <script>
         window.onerror = function(msg, url, line, col, error) {
@@ -25,8 +25,13 @@
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 10;
             display: flex; flex-direction: column; justify-content: space-between;
+            transition: opacity 0.3s ease;
         }
+        
+        /* 用於 Debug 隱藏 UI */
+        .ui-hidden { opacity: 0.1; }
 
+        /* 標題 */
         header {
             text-align: center; margin-top: 3vh;
             text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
@@ -78,6 +83,58 @@
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             color: #d4af37; font-family: 'Cinzel', serif; font-size: 1.2rem;
         }
+
+        /* --- Debug Panel 樣式 --- */
+        .debug-panel {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(10, 10, 10, 0.85);
+            border: 1px solid #d4af37;
+            border-radius: 8px;
+            padding: 15px;
+            z-index: 1000;
+            color: #d4af37;
+            font-family: monospace;
+            width: 300px;
+            pointer-events: auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+        }
+        .debug-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #555; padding-bottom: 8px; margin-bottom: 12px;
+        }
+        .debug-header h3 { margin: 0; font-size: 16px; color: #fff; }
+        .debug-row { margin-bottom: 15px; }
+        .debug-label {
+            display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 13px; color: #ccc;
+        }
+        .debug-controls { display: flex; align-items: center; gap: 8px; }
+        .debug-btn {
+            background: #333; color: white; border: 1px solid #555;
+            width: 24px; height: 24px; border-radius: 4px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+        }
+        .debug-btn:hover { background: #555; }
+        .debug-slider { flex-grow: 1; accent-color: #d4af37; cursor: pointer; }
+        
+        .debug-actions {
+            display: flex; gap: 10px; margin-top: 20px; border-top: 1px solid #444; padding-top: 10px;
+        }
+        .action-btn {
+            flex: 1; padding: 6px; font-size: 12px; cursor: pointer;
+            border: 1px solid #555; background: #222; color: #d4af37; border-radius: 4px;
+        }
+        .action-btn:hover { background: #444; }
+        .toggle-debug-btn {
+            position: fixed; left: 20px; top: 20px; z-index: 1001;
+            background: #333; color: #fff; border: 1px solid #555;
+            padding: 5px 12px; cursor: pointer; border-radius: 4px;
+            font-family: monospace;
+        }
     </style>
 
     <script type="importmap">
@@ -100,13 +157,14 @@
     <div id="root"></div>
 
     <script type="text/babel" data-type="module">
-        import React, { useState, useRef, useMemo, Suspense } from 'react';
+        import React, { useState, useRef, useMemo, Suspense, useEffect } from 'react';
         import { createRoot } from 'react-dom/client';
         import * as THREE from 'three';
         import { Canvas, useFrame, useThree } from '@react-three/fiber';
         import { OrbitControls, PerspectiveCamera, Float, Sparkles, Image as DreiImage, Environment, Html, useProgress } from '@react-three/drei';
         import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 
+        // --- 設定與資料 ---
         const PHOTO_PATHS = [
             "images/INTJ_boy.jpg", "images/INTJ_girl.jpg", "images/INTP_boy.jpg", "images/INTP_girl.jpg",
             "images/ENTJ_boy.jpg", "images/ENTJ_girl.jpg", "images/ENTP_boy.jpg", "images/ENTP_girl.jpg",
@@ -133,6 +191,7 @@
             return new THREE.Vector3(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
         };
 
+        // --- 3D 元件 ---
         function TreeParticles({ isFormed }) {
             const leafCount = 2500;
             const decorCount = 300;
@@ -280,25 +339,35 @@
             );
         }
 
-        // --- 核心修正：完美構圖參數 ---
-        function Scene({ isFormed, setZoom, zoomedId }) {
+        // --- 場景組件：接收調試參數 ---
+        function Scene({ isFormed, setZoom, zoomedId, debug }) {
+            const controlsRef = useRef();
+
+            // 強制在 TargetY 改變時更新控制器
+            useEffect(() => {
+                if (controlsRef.current) {
+                    controlsRef.current.target.set(0, debug.targetY, 0);
+                    controlsRef.current.update();
+                }
+            }, [debug.targetY]);
+
             return (
                 <>
-                    {/* 
-                       1. 距離 (Z): 28 -> 這是一個安全距離，讓26高的樹能完全進入畫面。
-                       2. 視角 (FOV): 60 -> 廣角一點，會讓樹感覺更巨大雄偉。
-                    */}
-                    <PerspectiveCamera makeDefault position={[0, 0, 28]} fov={60} />
+                    {/* 使用 Debug 參數控制相機位置 */}
+                    <PerspectiveCamera 
+                        makeDefault 
+                        position={[0, 0, debug.camZ]} 
+                        fov={60} 
+                        near={0.1} 
+                        far={500} 
+                    />
                     
-                    {/* 
-                       3. 視線目標 (Target): [0, 2, 0] -> 稍微往上看一點點，
-                          這樣樹的底部就會在畫面比較下方的位置，不會被切掉。
-                    */}
+                    {/* 使用 Debug 參數控制視線目標 */}
                     <OrbitControls 
+                        ref={controlsRef}
                         enablePan={false} 
-                        minDistance={15} 
-                        maxDistance={50} 
-                        target={[0, 2, 0]} 
+                        minDistance={5} 
+                        maxDistance={150} 
                         autoRotate={isFormed && !zoomedId} 
                         autoRotateSpeed={0.8} 
                     />
@@ -308,11 +377,8 @@
                     <pointLight position={[-10, 5, 10]} intensity={1} color="#ff4400" />
                     <Environment preset="lobby" />
 
-                    {/* 
-                       4. 樹的位置 (Y): -10 -> 向上提昇。
-                          這保證了樹的底部不會沉到螢幕外面。
-                    */}
-                    <group position={[0, -10, 0]}> 
+                    {/* 使用 Debug 參數控制樹的高度 */}
+                    <group position={[0, debug.treeY, 0]}> 
                         <TreeParticles isFormed={isFormed} />
                         <Float speed={1} rotationIntensity={1} floatIntensity={1}>
                             <Sparkles count={150} scale={25} size={5} speed={0.4} opacity={0.6} color="#FFD700" />
@@ -343,9 +409,36 @@
             return <Html center><div className="loader">{progress.toFixed(0)}%</div></Html>;
         }
 
+        // --- Debug 控制項組件 ---
+        const DebugControl = ({ label, value, set, min, max, step }) => (
+            <div className="debug-row">
+                <div className="debug-label">
+                    <span>{label}</span>
+                    <span style={{color:'#fff'}}>{value.toFixed(1)}</span>
+                </div>
+                <div className="debug-controls">
+                    <button className="debug-btn" onClick={() => set(prev => Math.max(min, Number((prev - step).toFixed(1))))}>-</button>
+                    <input 
+                        type="range" className="debug-slider" 
+                        min={min} max={max} step={step} 
+                        value={value} onChange={e => set(Number(e.target.value))} 
+                    />
+                    <button className="debug-btn" onClick={() => set(prev => Math.min(max, Number((prev + step).toFixed(1))))}>+</button>
+                </div>
+            </div>
+        );
+
         function App() {
             const [mode, setMode] = useState('FORMED');
             const [zoomedId, setZoomedId] = useState(null);
+            
+            // --- Debug State ---
+            const [camZ, setCamZ] = useState(28);      // 相機距離
+            const [targetY, setTargetY] = useState(0); // 視線高低
+            const [treeY, setTreeY] = useState(-10);   // 樹的升降
+            
+            const [showDebug, setShowDebug] = useState(true);
+            const [hideUI, setHideUI] = useState(false);
 
             const handleToggle = () => {
                 setMode(prev => prev === 'FORMED' ? 'CHAOS' : 'FORMED');
@@ -357,9 +450,46 @@
                 setZoomedId(randomId);
             };
             
+            const copyConfig = () => {
+                const config = JSON.stringify({ camZ, targetY, treeY }, null, 2);
+                navigator.clipboard.writeText(config).then(() => {
+                    alert('設定已複製！\n' + config);
+                });
+            };
+
             return (
                 <>
-                    <div id="ui-layer">
+                    {/* Debug Toggle Button (Always visible when debug is closed) */}
+                    {!showDebug && (
+                        <button className="toggle-debug-btn" onClick={() => setShowDebug(true)}>
+                            Show Debug
+                        </button>
+                    )}
+
+                    {/* Debug Panel */}
+                    {showDebug && (
+                        <div className="debug-panel">
+                            <div className="debug-header">
+                                <h3>⚙️ Composition Debug</h3>
+                                <button style={{background:'none', border:'none', color:'#888', cursor:'pointer'}} onClick={() => setShowDebug(false)}>✕</button>
+                            </div>
+                            
+                            <DebugControl label="Camera Distance (Z)" value={camZ} set={setCamZ} min={5} max={100} step={1} />
+                            <DebugControl label="Look At Target (Y)" value={targetY} set={setTargetY} min={-20} max={30} step={1} />
+                            <DebugControl label="Tree Position (Y)" value={treeY} set={setTreeY} min={-30} max={20} step={1} />
+                            
+                            <div className="debug-actions">
+                                <label style={{display:'flex', alignItems:'center', gap:5, cursor:'pointer', color:'#aaa', fontSize:12, flex:1}}>
+                                    <input type="checkbox" checked={hideUI} onChange={e => setHideUI(e.target.checked)} />
+                                    Hide UI
+                                </label>
+                                <button className="action-btn" onClick={copyConfig}>📋 Copy Config</button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Main UI Layer */}
+                    <div id="ui-layer" className={hideUI ? 'ui-hidden' : ''}>
                         <header>
                             <h1><span style={{fontSize:'2rem', verticalAlign:'middle'}}>🐾</span> NANA'S CHRISTMAS</h1>
                             <p className="subtitle">Grand Luxury Interactive Edition</p>
@@ -390,7 +520,8 @@
                             <Scene 
                                 isFormed={mode === 'FORMED'} 
                                 setZoom={setZoomedId} 
-                                zoomedId={zoomedId} 
+                                zoomedId={zoomedId}
+                                debug={{ camZ, targetY, treeY }} 
                             />
                         </Suspense>
                     </Canvas>
