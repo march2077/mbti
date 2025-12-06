@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎄 NaNa Grand Luxury Tree</title>
     
-    <!-- 1. 錯誤偵測系統 (若黑畫面會顯示原因) -->
+    <!-- 1. 錯誤偵測系統 -->
     <script>
         window.onerror = function(msg, url, line, col, error) {
             const div = document.createElement('div');
-            div.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); color:red; padding:20px; z-index:9999; overflow:auto; font-family:monospace; font-size:16px;';
-            div.innerHTML = `<h3>⚠️ 程式執行錯誤</h3><p><strong>Error:</strong> ${msg}</p><p><strong>Location:</strong> ${url}:${line}:${col}</p><p>請確保您使用 <strong>Live Server</strong> 開啟，而非直接雙擊檔案。</p>`;
+            div.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); color:#ff5555; padding:20px; z-index:9999; overflow:auto; font-family:monospace; font-size:16px; white-space: pre-wrap;';
+            div.innerHTML = `<h3>⚠️ 程式執行錯誤 (Debug Mode)</h3><p><strong>Error:</strong> ${msg}</p><p><strong>File:</strong> ${url}</p><p><strong>Line:</strong> ${line}:${col}</p><hr/><p>請截圖此畫面以進行除錯。</p>`;
             document.body.appendChild(div);
             return false;
         };
@@ -20,7 +20,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #050505; }
         
-        /* UI 樣式 */
         #ui {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 10;
@@ -40,14 +39,15 @@
             transition: transform 0.3s;
         }
         .btn:hover { transform: scale(1.1); box-shadow: 0 0 50px rgba(212,175,55,0.8); }
-        .loading { position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); color: #d4af37; font-family: monospace; }
     </style>
 
-    <!-- 2. Import Maps (核心依賴) -->
+    <!-- 2. Import Maps (關鍵修復：加入 jsx-runtime) -->
     <script type="importmap">
     {
         "imports": {
             "react": "https://esm.sh/react@18.2.0",
+            "react/jsx-runtime": "https://esm.sh/react@18.2.0/jsx-runtime",
+            "react/jsx-dev-runtime": "https://esm.sh/react@18.2.0/jsx-dev-runtime",
             "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
             "three": "https://esm.sh/three@0.160.0",
             "@react-three/fiber": "https://esm.sh/@react-three/fiber@8.15.12?external=react,react-dom,three",
@@ -58,21 +58,21 @@
         }
     }
     </script>
+    <!-- Babel 設置 -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
     <div id="root"></div>
 
     <script type="text/babel" data-type="module">
-        import React, { useState, useRef, useMemo, Suspense, useEffect } from 'react';
+        import React, { useState, useRef, useMemo, Suspense } from 'react';
         import { createRoot } from 'react-dom/client';
         import * as THREE from 'three';
-        import { Canvas, useFrame, useThree } from '@react-three/fiber';
-        import { OrbitControls, PerspectiveCamera, Float, Sparkles, Image as DreiImage, Environment, useTexture } from '@react-three/drei';
+        import { Canvas, useFrame } from '@react-three/fiber';
+        import { OrbitControls, PerspectiveCamera, Float, Sparkles, Image as DreiImage, Environment, Html } from '@react-three/drei';
         import { EffectComposer, Bloom, Vignette, Noise } from '@react-three/postprocessing';
 
-        // --- 設定與路徑 ---
-        // 請確保 images 資料夾存在，且檔名正確。如果沒有圖片，這裡會自動使用網路圖當備案。
+        // --- 圖片路徑 ---
         const PHOTO_PATHS = [
             "images/INTJ_boy.jpg", "images/INTJ_girl.jpg", "images/INTP_boy.jpg", "images/INTP_girl.jpg",
             "images/ENTJ_boy.jpg", "images/ENTJ_girl.jpg", "images/ENTP_boy.jpg", "images/ENTP_girl.jpg",
@@ -84,7 +84,7 @@
             "images/ESTP_boy.jpg", "images/ESTP_girl.jpg", "images/ESFP_boy.jpg", "images/ESFP_girl.jpg"
         ];
 
-        // --- 數學工具 (生成螺旋樹) ---
+        // --- 輔助向量函數 ---
         const randomVector = (r) => {
             const theta = 2 * Math.PI * Math.random();
             const phi = Math.acos(2 * Math.random() - 1);
@@ -96,58 +96,41 @@
         }
 
         const treeVector = (i, count) => {
-            const y = (i / count) * 16 - 8; // Height from -8 to 8
-            const radius = 6 * (1 - (i / count)); // Cone shape
-            const angle = i * 0.5; // Spiral density
-            return new THREE.Vector3(
-                Math.cos(angle) * radius,
-                y,
-                Math.sin(angle) * radius
-            );
+            const y = (i / count) * 16 - 8; 
+            const radius = 6 * (1 - (i / count)); 
+            const angle = i * 0.5;
+            return new THREE.Vector3(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
         }
 
-        // --- 核心組件：魔幻粒子樹 ---
+        // --- 粒子樹 ---
         function MagicTree({ isFormed }) {
             const count = 2000;
             const mesh = useRef();
             
-            // 初始化數據：Chaos(隨機) vs Target(樹形)
             const { dummy, particles } = useMemo(() => {
                 const dummy = new THREE.Object3D();
-                const particles = new Array(count).fill(0).map((_, i) => {
-                    const t = treeVector(i, count);
-                    const c = randomVector(12);
-                    return {
-                        target: t,
-                        chaos: c,
-                        current: c.clone(), // 當前位置
-                        scale: Math.random() * 0.3 + 0.1,
-                        color: Math.random() > 0.8 ? '#d4af37' : '#046307' // 金色少，綠色多
-                    };
-                });
+                const particles = new Array(count).fill(0).map((_, i) => ({
+                    target: treeVector(i, count),
+                    chaos: randomVector(12),
+                    current: randomVector(12),
+                    scale: Math.random() * 0.3 + 0.1,
+                    color: Math.random() > 0.8 ? '#d4af37' : '#046307'
+                }));
                 return { dummy, particles };
             }, []);
 
             useFrame((state) => {
                 if(!mesh.current) return;
-                
                 particles.forEach((p, i) => {
-                    // 1. 計算目標位置
                     const target = isFormed ? p.target : p.chaos;
-                    
-                    // 2. 移動邏輯 (Lerp)
                     p.current.lerp(target, 0.05);
                     
-                    // 3. 加上一點「呼吸」浮動
-                    const wave = Math.sin(state.clock.elapsedTime + i) * 0.05;
-                    
                     dummy.position.copy(p.current);
-                    if(isFormed) dummy.position.y += wave; // 只有樹型態才上下浮動
-                    else dummy.rotation.x += 0.01; // 混亂型態會自轉
+                    if(isFormed) dummy.position.y += Math.sin(state.clock.elapsedTime + i) * 0.05;
+                    else dummy.rotation.x += 0.01;
 
                     dummy.scale.setScalar(p.scale);
                     dummy.updateMatrix();
-                    
                     mesh.current.setMatrixAt(i, dummy.matrix);
                     mesh.current.setColorAt(i, new THREE.Color(p.color));
                 });
@@ -157,21 +140,19 @@
 
             return (
                 <instancedMesh ref={mesh} args={[null, null, count]}>
-                    <sphereGeometry args={[1, 8, 8]} /> {/* 低面數球體優化效能 */}
-                    <meshBasicMaterial toneMapped={false} /> {/* BasicMaterial 發光效果最好 */}
+                    <sphereGeometry args={[1, 8, 8]} />
+                    <meshBasicMaterial toneMapped={false} />
                 </instancedMesh>
             );
         }
 
-        // --- 核心組件：拍立得照片牆 ---
+        // --- 拍立得 ---
         function Polaroid({ url, index, isFormed, isUnleashed, setZoom, zoomedId }) {
             const group = useRef();
             const [hovered, setHover] = useState(false);
             
-            // 計算位置
             const { treePos, chaosPos, chaosRot } = useMemo(() => {
-                const t = treeVector(index * (2000/32), 2000); // 分散在樹的螺旋線上
-                t.multiplyScalar(1.2); // 稍微往外推一點，浮在樹葉上
+                const t = treeVector(index * (2000/32), 2000).multiplyScalar(1.2);
                 return {
                     treePos: t,
                     chaosPos: randomVector(18),
@@ -181,39 +162,33 @@
 
             useFrame((state) => {
                 if(!group.current) return;
-                
                 const isZoomed = zoomedId === index;
                 let targetPos = new THREE.Vector3();
                 let targetRot = new THREE.Quaternion();
                 let targetScale = 1;
 
                 if (isZoomed) {
-                    // 放大模式：飛到相機前面
                     const cam = state.camera;
                     const offset = new THREE.Vector3(0, 0, -6).applyQuaternion(cam.quaternion);
                     targetPos.copy(cam.position).add(offset);
                     targetRot.copy(cam.quaternion);
                     targetScale = 3;
                 } else {
-                    // 普通模式
                     targetPos = isFormed ? treePos : chaosPos;
                     if(isFormed) {
-                        // 樹模式：面朝中心，然後轉過來面朝外
                         const dummy = new THREE.Object3D();
                         dummy.position.copy(targetPos);
                         dummy.lookAt(0, targetPos.y, 0); 
                         targetRot.setFromEuler(dummy.rotation);
                     } else {
-                        // 混亂模式：隨機旋轉
                         const dummy = new THREE.Object3D();
                         dummy.rotation.set(...chaosRot);
                         targetRot.setFromEuler(dummy.rotation);
-                        targetPos.y += Math.sin(state.clock.elapsedTime + index) * 0.02; // 漂浮
+                        targetPos.y += Math.sin(state.clock.elapsedTime + index) * 0.02;
                     }
                     targetScale = (hovered && isUnleashed) ? 1.5 : 1;
                 }
 
-                // 動畫插值
                 group.current.position.lerp(targetPos, 0.1);
                 group.current.quaternion.slerp(targetRot, 0.1);
                 group.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
@@ -225,15 +200,11 @@
                     onPointerOver={() => isUnleashed && setHover(true)}
                     onPointerOut={() => setHover(false)}
                 >
-                    {/* 白邊框 */}
                     <mesh position={[0,0,-0.05]}>
                         <boxGeometry args={[1.2, 1.5, 0.05]} />
                         <meshStandardMaterial color="#fff" roughness={0.5} />
                     </mesh>
-                    {/* 照片本體 (使用 Suspense 防爆) */}
-                    <Suspense fallback={<mesh><planeGeometry /><meshBasicMaterial color="gray"/></mesh>}>
-                        <DreiImage url={url} position={[0, 0.15, 0.01]} scale={[1, 1, 1]} transparent />
-                    </Suspense>
+                    <DreiImage url={url} position={[0, 0.15, 0.01]} scale={[1, 1, 1]} transparent />
                     <mesh position={[0,-0.6,0.01]}>
                          <planeGeometry args={[0.8, 0.1]} />
                          <meshBasicMaterial color="#eee" />
@@ -244,13 +215,12 @@
 
         // --- 主場景 ---
         function Scene() {
-            const [mode, setMode] = useState('FORMED'); // FORMED | CHAOS
+            const [mode, setMode] = useState('FORMED');
             const [zoomedId, setZoom] = useState(null);
             const isFormed = mode === 'FORMED';
 
             return (
                 <>
-                    {/* UI 層 (HTML) */}
                     <Html fullscreen style={{pointerEvents: 'none'}}>
                         <div id="ui">
                             <div>
@@ -263,39 +233,23 @@
                         </div>
                     </Html>
 
-                    {/* 3D 內容 */}
                     <PerspectiveCamera makeDefault position={[0, 0, 25]} fov={45} />
                     <OrbitControls enablePan={false} maxDistance={40} minDistance={5} autoRotate={isFormed} autoRotateSpeed={0.5} />
                     
-                    {/* 燈光 */}
                     <ambientLight intensity={0.5} color="#d4af37" />
                     <pointLight position={[10, 10, 10]} intensity={2} color="#ff0000" />
                     <pointLight position={[-10, -10, -10]} intensity={2} color="#00ff00" />
 
                     <group position={[0, -2, 0]}>
-                        {/* 粒子樹 */}
                         <MagicTree isFormed={isFormed} />
-                        
-                        {/* 閃亮特效 */}
                         <Float speed={2} rotationIntensity={1} floatIntensity={1}>
                             <Sparkles count={100} scale={12} size={4} speed={0.4} opacity={0.5} color="#d4af37" />
                         </Float>
-
-                        {/* 照片牆 */}
                         {PHOTO_PATHS.map((path, i) => (
-                            <Polaroid 
-                                key={i} 
-                                index={i} 
-                                url={path} 
-                                isFormed={isFormed}
-                                isUnleashed={!isFormed}
-                                setZoom={setZoom}
-                                zoomedId={zoomedId}
-                            />
+                            <Polaroid key={i} index={i} url={path} isFormed={isFormed} isUnleashed={!isFormed} setZoom={setZoom} zoomedId={zoomedId} />
                         ))}
                     </group>
 
-                    {/* 後製特效 (輝光) */}
                     <EffectComposer disableNormalPass>
                         <Bloom luminanceThreshold={0.5} mipmapBlur intensity={1.5} radius={0.6} />
                         <Noise opacity={0.02} />
@@ -305,7 +259,7 @@
             );
         }
 
-        // --- 應用入口 ---
+        // --- App ---
         function App() {
             return (
                 <Canvas gl={{ antialias: false, toneMapping: THREE.ReinhardToneMapping, toneMappingExposure: 1.5 }}>
