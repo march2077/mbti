@@ -29,7 +29,7 @@
             display: flex; flex-direction: column; justify-content: space-between;
         }
 
-        /* 標題設定 (保持您滿意的大小) */
+        /* 標題設定 */
         header {
             text-align: center; margin-top: 3vh;
             text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
@@ -57,7 +57,7 @@
             margin-bottom: 6vh; 
         }
 
-        /* 按鈕設定 (保持您滿意的大小) */
+        /* 按鈕設定 */
         .btn-luxury {
             background: linear-gradient(135deg, #d4af37 0%, #f9f295 50%, #aa8e28 100%);
             border: 1px solid #fff8e7;
@@ -114,7 +114,6 @@
         import { OrbitControls, PerspectiveCamera, Float, Sparkles, Image as DreiImage, Environment, Html, useProgress } from '@react-three/drei';
         import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 
-        // --- 設定 ---
         const PHOTO_PATHS = [
             "images/INTJ_boy.jpg", "images/INTJ_girl.jpg", "images/INTP_boy.jpg", "images/INTP_girl.jpg",
             "images/ENTJ_boy.jpg", "images/ENTJ_girl.jpg", "images/ENTP_boy.jpg", "images/ENTP_girl.jpg",
@@ -126,22 +125,12 @@
             "images/ESTP_boy.jpg", "images/ESTP_girl.jpg", "images/ESFP_boy.jpg", "images/ESFP_girl.jpg"
         ];
 
-        const COLORS = {
-            EMERALD: "#046307",
-            GOLD: "#FFD700",
-            RED: "#8B0000",
-            SILVER: "#C0C0C0"
-        };
+        const COLORS = { EMERALD: "#046307", GOLD: "#FFD700", RED: "#8B0000", SILVER: "#C0C0C0" };
 
-        // --- 數學工具 ---
         const randomVector = (r) => {
             const theta = 2 * Math.PI * Math.random();
             const phi = Math.acos(2 * Math.random() - 1);
-            return new THREE.Vector3(
-                r * Math.sin(phi) * Math.cos(theta),
-                r * Math.sin(phi) * Math.sin(theta),
-                r * Math.cos(phi)
-            );
+            return new THREE.Vector3(r * Math.sin(phi) * Math.cos(theta), r * Math.sin(phi) * Math.sin(theta), r * Math.cos(phi));
         };
 
         const treeVector = (i, count, radiusBase, height) => {
@@ -151,7 +140,6 @@
             return new THREE.Vector3(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
         };
 
-        // --- 樹葉與裝飾 ---
         function TreeParticles({ isFormed }) {
             const leafCount = 2500;
             const decorCount = 300;
@@ -160,9 +148,9 @@
             const dummy = useMemo(() => new THREE.Object3D(), []);
 
             const leafData = useMemo(() => new Array(leafCount).fill(0).map((_, i) => ({
-                treePos: treeVector(i, leafCount, 10, 24),
-                chaosPos: randomVector(18),
-                current: randomVector(18),
+                treePos: treeVector(i, leafCount, 12, 26), // 樹變大
+                chaosPos: randomVector(20),
+                current: randomVector(20),
                 scale: Math.random() * 0.25 + 0.1,
                 speed: Math.random() * 0.02 + 0.04
             })), []);
@@ -170,12 +158,12 @@
             const decorData = useMemo(() => new Array(decorCount).fill(0).map((_, i) => {
                 const colorKeys = Object.keys(COLORS).filter(k => k !== 'EMERALD');
                 const randColor = COLORS[colorKeys[Math.floor(Math.random() * colorKeys.length)]];
-                const vec = treeVector(i, decorCount, 10.5, 23);
+                const vec = treeVector(i, decorCount, 12.5, 25);
                 vec.x += (Math.random()-0.5); vec.z += (Math.random()-0.5);
                 return {
                     treePos: vec,
-                    chaosPos: randomVector(24),
-                    current: randomVector(24),
+                    chaosPos: randomVector(25),
+                    current: randomVector(25),
                     scale: Math.random() * 0.4 + 0.3,
                     color: new THREE.Color(randColor),
                     speed: Math.random() * 0.02 + 0.03
@@ -228,17 +216,16 @@
             );
         }
 
-        // --- 拍立得照片 ---
         function Polaroid({ url, index, isFormed, isUnleashed, setZoom, zoomedId }) {
             const group = useRef();
             const [hovered, setHover] = useState(false);
             
             const { treePos, chaosPos, randomRot } = useMemo(() => {
-                const t = treeVector(index, 32, 11, 22); 
+                const t = treeVector(index, 32, 13, 24); 
                 t.y += 1; 
                 return {
                     treePos: t,
-                    chaosPos: randomVector(28),
+                    chaosPos: randomVector(30),
                     randomRot: [Math.random()*Math.PI, Math.random()*Math.PI, 0]
                 };
             }, [index]);
@@ -253,7 +240,6 @@
 
                 if (isZoomed) {
                     const cam = state.camera;
-                    // Zoom 時飛到相機前方
                     const fwd = new THREE.Vector3(0, 0, -5).applyQuaternion(cam.quaternion);
                     targetPos.copy(cam.position).add(fwd);
                     targetRot.copy(cam.quaternion);
@@ -301,23 +287,27 @@
             );
         }
 
-        // --- 場景 ---
+        // --- 核心修改區域：場景配置 ---
         function Scene({ isFormed, setZoom, zoomedId }) {
             return (
                 <>
                     {/* 
-                      修正重點：
-                      1. Position Z: 拉遠到 30 (原本16)，這會讓樹縮小至約 60%
-                      2. Controls Target Y: 設定為 -4，這樣相機就會看向樹的腰部，而不是樹的頂端
-                         這能解決「樹被卡在畫面上面」和「下面被切掉」的問題。
+                       1. 鏡頭位置: [0, 0, 18] -> 距離近，樹會變大
+                       2. FOV: 60 -> 視野廣，更有臨場感
                     */}
-                    <PerspectiveCamera makeDefault position={[0, 0, 30]} fov={55} />
+                    <PerspectiveCamera makeDefault position={[0, 0, 18]} fov={60} />
                     
+                    {/* 
+                       3. Target: [0, 0, 0] -> 這是最關鍵的修正！
+                          這告訴相機：「看正前方」。
+                          之前的 target Y 是 -4，導致相機低頭看，樹就會往上飄。
+                          現在改為 0，樹會穩穩地在畫面正中央。
+                    */}
                     <OrbitControls 
                         enablePan={false} 
-                        minDistance={15} 
+                        minDistance={10} 
                         maxDistance={50} 
-                        target={[0, -4, 0]} /* 關鍵修正：看向樹的中心 */
+                        target={[0, 0, 0]} 
                         autoRotate={isFormed && !zoomedId} 
                         autoRotateSpeed={0.8} 
                     />
@@ -327,8 +317,13 @@
                     <pointLight position={[-10, 5, 10]} intensity={1} color="#ff4400" />
                     <Environment preset="lobby" />
 
-                    {/* 樹的位置設為 -10，配合 target -4，會剛好在畫面中央 */}
-                    <group position={[0, -10, 0]}> 
+                    {/* 
+                       4. 樹的位置: Y = -12
+                          因為樹高約 24，從 0 長到 24。
+                          將它下移 12，樹的範圍變成 -12 到 +12。
+                          這樣樹的中心點就是 0，剛好對準相機。
+                    */}
+                    <group position={[0, -12, 0]}> 
                         <TreeParticles isFormed={isFormed} />
                         <Float speed={1} rotationIntensity={1} floatIntensity={1}>
                             <Sparkles count={150} scale={25} size={5} speed={0.4} opacity={0.6} color="#FFD700" />
@@ -348,7 +343,6 @@
 
                     <EffectComposer disableNormalPass>
                         <Bloom luminanceThreshold={0.7} mipmapBlur intensity={1.8} radius={0.6} />
-                        {/* 修正：將 darkness 調淡到 0.9，解決遮罩/裁切感 */}
                         <Vignette eskil={false} offset={0.1} darkness={0.9} />
                     </EffectComposer>
                 </>
@@ -360,7 +354,6 @@
             return <Html center><div className="loader">{progress.toFixed(0)}%</div></Html>;
         }
 
-        // --- App ---
         function App() {
             const [mode, setMode] = useState('FORMED');
             const [zoomedId, setZoom] = useState(null);
